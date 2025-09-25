@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config name="ops_base" copy_type="delivery" src_path="" dst_path="ops_base" install_type="all" install_mod="550" install_own="$username:$usergroup">
+    <package_info>
+        <product_name>cann</product_name>
+        <func_name>opbase</func_name>
+        <suffix>run</suffix>
+        <install_script>ops_base/script/install.sh</install_script>
+        <help>ops_base/script/help.info</help>
+        <version>package/ops_base/version.xml</version>
+        <cleanup>ops_base/script/cleanup.sh</cleanup>
+        <parallel>true</parallel>
+        <check_features>true</check_features>
+    </package_info>
+    <generate_info value="ops_base_version.h" dst_path="ops_base" install_path="$(TARGET_ENV)/include/version" install_mod="440" install_type="devel" generator="version_header">
+        <OPS_BASE_VERSION>$(VERSION_DIR)</OPS_BASE_VERSION>
+        <OPS_BASE_TIMESTAMP>$(TIMESTAMP_NO)</OPS_BASE_TIMESTAMP>
+    </generate_info>
+    <generate_info value="scene.info" dst_path="ops_base" install_path="ops_base" install_mod="440">
+        <os>$(OS_NAME)</os>
+        <os_version>$(OS_VER)</os_version>
+        <arch>$(ARCH)</arch>
+    </generate_info>
+    <version_info install="true" install_path="ops_base" install_own="$username:$usergroup" install_mod="440"/>
+    <file_info value="ops_base_script" copy_type="source" src_path="" dst_path="ops_base" install_path="ops_base">
+        <file value="script" entity="true"/>
+        <file value="bin" entity="true"/>
+        <file value="version.info" dst_path="."/>
+    </file_info>
+    <file_info copy_type="source" src_path="" dst_path="ops_base/include" install_path="$(TARGET_ENV)/include" install_type="all">
+        <file value="op_common" install_mod="550" entity="true" pkg_inner_softlink="ops_base/include/op_common"/>
+        <file value="aicpu_common" install_mod="550" entity="true" pkg_inner_softlink="ops_base/include/aicpu_common"/>
+    </file_info>
+    <file_info value="ops_base_lib" copy_type="delivery" src_path="" dst_path="ops_base/lib" install_path="$(TARGET_ENV)/lib64" install_mod="440">
+        <file value="libops_base.so" file_type="shared" pkg_inner_softlink="ops_base/lib64/libops_base.so"/>
+    </file_info>
+    <file_info value="ops_base_lib_aicpu" copy_type="delivery" src_path="" dst_path="ops_base/lib/aicpu_common" install_path="$(TARGET_ENV)/lib64" install_mod="440">
+        <file value="libaicpu_context.a" file_type="shared" pkg_inner_softlink="ops_base/lib64/libaicpu_context.a"/>
+        <file value="libaicpu_nodedef.a" file_type="shared" pkg_inner_softlink="ops_base/lib64/libaicpu_nodedef.a"/>
+        <file value="libbase_ascend_protobuf.a" file_type="shared" pkg_inner_softlink="ops_base/lib64/libbase_ascend_protobuf.a"/>
+    </file_info>
+    <block_info dependtree="false" dst_path="ops_base" block_conf_path="ascend">
+        <block name="EngineeringCommon"/>
+        <block name="EngineeringFiles"/>
+    </block_info>
+    <dir_info value="ops_base" install_path="ops_base" install_mod="550" install_type="all">
+        <path value="ops_base" install_mod="750"/>
+        <path value="ops_base/script"/>
+        <path value="ops_base/bin"/>
+        <path value="ops_base/lib64"/>
+        <path value="ops_base/include"/>
+    </dir_info>
+    <dir_info value="ops_base" install_path="" install_mod="550" install_type="all">
+        <path value="$(TARGET_ENV)/include"/>
+        <path value="$(TARGET_ENV)/include/op_common"/>
+        <path value="$(TARGET_ENV)/include/aicpu_common"/>
+    </dir_info>
+</config>
