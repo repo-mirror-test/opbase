@@ -106,6 +106,14 @@ install(DIRECTORY ${opp_source}/
     OWNER_READ OWNER_WRITE
     GROUP_READ GROUP_EXECUTE
 )
+
+set(pkg_inc_src ${CMAKE_SOURCE_DIR}/pkg_inc)
+install(DIRECTORY ${pkg_inc_src}/
+    DESTINATION ops_base/pkg_inc
+    FILE_PERMISSIONS
+    OWNER_READ OWNER_WRITE
+    GROUP_READ GROUP_EXECUTE
+)
 install(TARGETS ops_base
         LIBRARY DESTINATION ops_base/lib)
 install(TARGETS aicpu_context

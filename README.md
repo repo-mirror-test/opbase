@@ -22,12 +22,15 @@ opbase是[CANN](https://hiascend.com/software/cann) （Compute Architecture for 
 ├── docs                           # 项目文档介绍
 ├── include                        # 项目公共头文件      
 │   ├── aicpu_common               # aicpu公共函数头文件        
-│   └── op_common                  # op_commo源码头文件
+│   └── op_common                  # op_common源码头文件
 ├── LICENSE
-├── op_common                      # op_commo源码实现
-│   ├── atvoss
-│   ├── log
-│   └── op_host
+├── pkg_inc                        # 项目公共头文件            
+│   └── op_common                  # op_common源码头文件
+├── src
+│   └── op_common                  # op_common源码实现
+│       ├── atvoss
+│       ├── log
+│       └── op_host
 ├── README.md
 ├── requirements.txt               # 项目依赖的第三方软件包
 ├── scripts                        # 项目脚本文件存放目录

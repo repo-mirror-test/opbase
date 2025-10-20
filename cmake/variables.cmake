@@ -20,27 +20,27 @@ if (NOT CANN_3RD_PKG_PATH)
 endif ()
 
 file(GLOB_RECURSE OPS_BASE_SRC CACHE
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/op_host/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/op_host/util/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/log/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/atvoss/elewise/elewise_tiling.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/atvoss/broadcast/broadcast_tiling.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/atvoss/reduce/reduce_tiling.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/op_host/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/op_host/util/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/log/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/atvoss/elewise/elewise_tiling.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/atvoss/broadcast/broadcast_tiling.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/atvoss/reduce/reduce_tiling.cpp
 )
 
 file(GLOB_RECURSE OPS_BASE_INFER_SRC CACHE
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/op_host/infershape_broadcast_util.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/op_host/infershape_elewise_util.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/op_host/infershape_reduce_util.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/op_host/infershape_broadcast_util.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/op_host/infershape_elewise_util.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/op_host/infershape_reduce_util.cpp
 )
 
 file(GLOB_RECURSE OPS_BASE_TILING_SRC CACHE
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/atvoss/elewise/elewise_tiling.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/atvoss/broadcast/broadcast_tiling.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/atvoss/reduce/reduce_tiling.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/atvoss/elewise/elewise_tiling.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/atvoss/broadcast/broadcast_tiling.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/atvoss/reduce/reduce_tiling.cpp
 )
 
 file(GLOB_RECURSE OPS_BASE_UTIL_SRC CACHE
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/op_host/util/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/op_common/log/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/op_host/util/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/op_common/log/*.cpp
 )
