@@ -12,7 +12,7 @@ opbase是[CANN](https://hiascend.com/software/cann) （Compute Architecture for 
 
 ## 🔍目录结构
 
-关键目录如下：
+关键目录如下，详细目录介绍参见[项目目录](./docs/context/dir_structure.md)。
 
 ```
 ├── aicpu_common                   # aicpu公共函数实现
