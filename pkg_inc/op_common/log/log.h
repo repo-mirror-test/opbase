@@ -128,6 +128,12 @@ typename std::enable_if<IsContextType<T>(), std::string>::type GetOpInfo(T conte
         OP_LOGE_WITHOUT_REPORT(opName, ##__VA_ARGS__); \
         REPORT_INNER_ERR_MSG("EZ9999", ##__VA_ARGS__); \
     } while (0)
+
+#define OP_LOGE_WITH_ERRCODE(opName, errCode, ...)                              \
+    do {                                                                        \
+        OP_LOGE_WITHOUT_REPORT(opName, ##__VA_ARGS__);                          \
+        REPORT_INNER_ERR_MSG(std::to_string(errCode).c_str(), ##__VA_ARGS__);   \
+    } while (0)
 #define OP_LOGD(opName, ...) D_OP_LOGD(Ops::Base::GetOpInfo(opName), __VA_ARGS__)
 #define OP_CHECK_IF(condition, log, return_expr) \
     do {                                         \
