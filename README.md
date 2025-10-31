@@ -8,7 +8,7 @@
 
 opbase是[CANN](https://hiascend.com/software/cann) （Compute Architecture for Neural Networks）算子库中提供算子公共能力的基础框架库，涵盖了op_common基础框架和公共依赖项。
 
-<img src="docs/figures/architecture.png" alt="架构图"  width="750px" height="400px">
+<img src="docs/figures/architecture.png" alt="架构图"  width="700px" height="320px">
 
 ## 🔍目录结构
 
