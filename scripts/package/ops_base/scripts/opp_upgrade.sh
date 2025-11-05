@@ -577,7 +577,7 @@ logandprint "[INFO1]: Creating ("${atvoss_dst_dir}""/atvoss") soft link from ("$
 logandprint "[INFO1]: Creating ("${atvoss_dst_dir}""/atvoss") soft link from ("${atvoss_ops_base_dir}""/atvoss")."
 
 # create atvoss softlink
-atvoss_ops_base_dir=${_TARGET_INSTALL_PATH}/latest/ops_base/include/op_common
+atvoss_ops_base_dir=${_TARGET_INSTALL_PATH}/latest/ops_base/pkg_inc/op_common
 atvoss_dst_dir=${_TARGET_INSTALL_PATH}/latest/opp/built-in/op_impl/ai_core/tbe/impl/ascendc/common
 if [ ! -d "${atvoss_dst_dir}" ];then
     mkdir -p "${atvoss_dst_dir}"
@@ -589,7 +589,7 @@ createsoftlink "${atvoss_ops_base_dir}""/atvoss" "${atvoss_dst_dir}""/atvoss"
 logwitherrorlevel "$?" "warn" "[WARNING]: Create soft link for "${atvoss_dst_dir}""/atvoss". That may cause some issues for atvoss."
 
 # create atvoss op_kernel softlink
-atvoss_op_kernel_src_dir=${_TARGET_INSTALL_PATH}/latest/ops_base/include/op_common/op_kernel
+atvoss_op_kernel_src_dir=${_TARGET_INSTALL_PATH}/latest/ops_base/pkg_inc/op_common/op_kernel
 atvoss_op_kernel_dst_dir=${_TARGET_INSTALL_PATH}/latest/opp/built-in/op_impl/ai_core/tbe/impl/ascendc/common/op_kernel
 if [ ! -d "${atvoss_op_kernel_dst_dir}" ];then
     mkdir -p "${atvoss_op_kernel_dst_dir}"

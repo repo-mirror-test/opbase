@@ -16,8 +16,7 @@
 │   └── variables.cmake                                 # 项目工程编译参数配置文件
 ├── docs                                                # 项目相关文档目录
 ├── include                                             # 项目公共头文件      
-│   ├── aicpu_common                                    # aicpu公共函数头文件        
-│   └── op_common                                       # op_common源码头文件（即将废弃）
+│   └── aicpu_common                                    # aicpu公共函数头文件        
 ├── pkg_inc                                             # 项目包间接口头文件目录           
 │   └── op_common                                       # op_common源码头文件
 │       ├── atvoss                                      # atvoss接口头文件，包括broadcast、elewise等

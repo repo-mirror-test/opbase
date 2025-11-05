@@ -27,7 +27,6 @@
         <file value="version.info" dst_path="."/>
     </file_info>
     <file_info copy_type="source" src_path="" dst_path="ops_base/include" install_path="$(TARGET_ENV)/include" install_type="all">
-        <file value="op_common" install_mod="550" entity="true" pkg_inner_softlink="ops_base/include/op_common"/>
         <file value="aicpu_common" install_mod="550" entity="true" pkg_inner_softlink="ops_base/include/aicpu_common"/>
     </file_info>
     <file_info copy_type="source" src_path="" dst_path="ops_base/pkg_inc" install_path="$(TARGET_ENV)/pkg_inc" install_type="all">
@@ -58,7 +57,6 @@
     </dir_info>
     <dir_info value="ops_base" install_path="" install_mod="550" install_type="all">
         <path value="$(TARGET_ENV)/include"/>
-        <path value="$(TARGET_ENV)/include/op_common"/>
         <path value="$(TARGET_ENV)/include/aicpu_common"/>
         <path value="$(TARGET_ENV)/pkg_inc"/>
         <path value="$(TARGET_ENV)/pkg_inc/op_common"/>

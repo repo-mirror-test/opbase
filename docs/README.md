@@ -42,7 +42,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="36.116388361163885%" headers="mcps1.2.5.1.3 "><p id="p2234144874116"><a name="p2234144874116"></a><a name="p2234144874116"></a>打印算子ERROR级别日志。</p>
 </td>
-<td class="cellrowborder" rowspan="6" valign="top" width="27.62723727627237%" headers="mcps1.2.5.1.4 "><p id="p742427134215"><a name="p742427134215"></a><a name="p742427134215"></a>include/op_common/log/log.h</p>
+<td class="cellrowborder" rowspan="6" valign="top" width="27.62723727627237%" headers="mcps1.2.5.1.4 "><p id="p742427134215"><a name="p742427134215"></a><a name="p742427134215"></a>pkg_inc/op_common/log/log.h</p>
 <p id="p1142497124213"><a name="p1142497124213"></a><a name="p1142497124213"></a></p>
 <p id="p1042414774212"><a name="p1042414774212"></a><a name="p1042414774212"></a></p>
 <p id="p3424137194217"><a name="p3424137194217"></a><a name="p3424137194217"></a></p>
@@ -90,7 +90,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="36.116388361163885%" headers="mcps1.2.5.1.3 "><p id="p3135845204016"><a name="p3135845204016"></a><a name="p3135845204016"></a><span>向下取整的除法</span>。</p>
 </td>
-<td class="cellrowborder" rowspan="5" valign="top" width="27.62723727627237%" headers="mcps1.2.5.1.4 "><p id="p91350459405"><a name="p91350459405"></a><a name="p91350459405"></a><span>include/op_common/op_host/util/math_util.h</span></p>
+<td class="cellrowborder" rowspan="5" valign="top" width="27.62723727627237%" headers="mcps1.2.5.1.4 "><p id="p91350459405"><a name="p91350459405"></a><a name="p91350459405"></a><span>pkg_inc/op_common/op_host/util/math_util.h</span></p>
 <p id="p16961152114118"><a name="p16961152114118"></a><a name="p16961152114118"></a></p>
 <p id="p3628109416"><a name="p3628109416"></a><a name="p3628109416"></a></p>
 <p id="p1996412137419"><a name="p1996412137419"></a><a name="p1996412137419"></a></p>
@@ -126,7 +126,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="36.116388361163885%" headers="mcps1.2.5.1.3 "><p id="p15141021194120"><a name="p15141021194120"></a><a name="p15141021194120"></a><span>获取平台AI Vector的核数</span>。</p>
 </td>
-<td class="cellrowborder" rowspan="4" valign="top" width="27.62723727627237%" headers="mcps1.2.5.1.4 "><p id="p18141021144119"><a name="p18141021144119"></a><a name="p18141021144119"></a><span>include/op_common/op_host/util/platform_util.h</span></p>
+<td class="cellrowborder" rowspan="4" valign="top" width="27.62723727627237%" headers="mcps1.2.5.1.4 "><p id="p18141021144119"><a name="p18141021144119"></a><a name="p18141021144119"></a><span>pkg_inc/op_common/op_host/util/platform_util.h</span></p>
 <p id="p1580719244418"><a name="p1580719244418"></a><a name="p1580719244418"></a></p>
 <p id="p1441072816419"><a name="p1441072816419"></a><a name="p1441072816419"></a></p>
 <p id="p5392174684115"><a name="p5392174684115"></a><a name="p5392174684115"></a></p>
@@ -159,7 +159,7 @@
 </td>
 <td class="cellrowborder" valign="top" width="36.116388361163885%" headers="mcps1.2.5.1.3 "><p id="p3732250204120"><a name="p3732250204120"></a><a name="p3732250204120"></a><span>设置输入shape为维度不确定的动态shape</span>。</p>
 </td>
-<td class="cellrowborder" rowspan="4" valign="top" width="27.62723727627237%" headers="mcps1.2.5.1.4 "><p id="p15733950194112"><a name="p15733950194112"></a><a name="p15733950194112"></a><span>include/op_common/op_host/util/shape_util.h</span></p>
+<td class="cellrowborder" rowspan="4" valign="top" width="27.62723727627237%" headers="mcps1.2.5.1.4 "><p id="p15733950194112"><a name="p15733950194112"></a><a name="p15733950194112"></a><span>pkg_inc/op_common/op_host/util/shape_util.h</span></p>
 <p id="p1672163818461"><a name="p1672163818461"></a><a name="p1672163818461"></a></p>
 <p id="p827074144613"><a name="p827074144613"></a><a name="p827074144613"></a></p>
 <p id="p15551744104611"><a name="p15551744104611"></a><a name="p15551744104611"></a></p>
@@ -184,21 +184,21 @@
 </td>
 <td class="cellrowborder" valign="top" headers="mcps1.2.5.1.2 "><p id="p12498154834617"><a name="p12498154834617"></a><a name="p12498154834617"></a><span>broadcast类算子的infershape方法</span>。</p>
 </td>
-<td class="cellrowborder" valign="top" headers="mcps1.2.5.1.3 "><p id="p7498248164612"><a name="p7498248164612"></a><a name="p7498248164612"></a><span>include/op_common/op_host/infershape_broadcast_util.h</span></p>
+<td class="cellrowborder" valign="top" headers="mcps1.2.5.1.3 "><p id="p7498248164612"><a name="p7498248164612"></a><a name="p7498248164612"></a><span>pkg_inc/op_common/op_host/infershape_broadcast_util.h</span></p>
 </td>
 </tr>
 <tr id="row66821950114613"><td class="cellrowborder" valign="top" headers="mcps1.2.5.1.1 "><p id="p868210502462"><a name="p868210502462"></a><a name="p868210502462"></a><a href="./op_common/InferShape4Elewise.md">InferShape4Elewise</a></p>
 </td>
 <td class="cellrowborder" valign="top" headers="mcps1.2.5.1.2 "><p id="p0682115054617"><a name="p0682115054617"></a><a name="p0682115054617"></a><span>elewise类算子的infershape方法</span>。</p>
 </td>
-<td class="cellrowborder" valign="top" headers="mcps1.2.5.1.3 "><p id="p106829501460"><a name="p106829501460"></a><a name="p106829501460"></a><span>include/op_common/op_host/infershape_elewise_util.h</span></p>
+<td class="cellrowborder" valign="top" headers="mcps1.2.5.1.3 "><p id="p106829501460"><a name="p106829501460"></a><a name="p106829501460"></a><span>pkg_inc/op_common/op_host/infershape_elewise_util.h</span></p>
 </td>
 </tr>
 <tr id="row2206175354612"><td class="cellrowborder" valign="top" headers="mcps1.2.5.1.1 "><p id="p1620635374620"><a name="p1620635374620"></a><a name="p1620635374620"></a><a href="./op_common/InferShape4Reduce.md">InferShape4Reduce</a></p>
 </td>
 <td class="cellrowborder" valign="top" headers="mcps1.2.5.1.2 "><p id="p1920645311469"><a name="p1920645311469"></a><a name="p1920645311469"></a><span>reduce类算子的infershape方法</span>。</p>
 </td>
-<td class="cellrowborder" valign="top" headers="mcps1.2.5.1.3 "><p id="p7206165313466"><a name="p7206165313466"></a><a name="p7206165313466"></a><span>include/op_common/op_host/infershape_reduce_util.h</span></p>
+<td class="cellrowborder" valign="top" headers="mcps1.2.5.1.3 "><p id="p7206165313466"><a name="p7206165313466"></a><a name="p7206165313466"></a><span>pkg_inc/op_common/op_host/infershape_reduce_util.h</span></p>
 </td>
 </tr>
 </tbody>

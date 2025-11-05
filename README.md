@@ -21,8 +21,7 @@ opbase是[CANN](https://hiascend.com/software/cann) （Compute Architecture for 
 ├── CMakeLists.txt                 # 算子编译配置文件
 ├── docs                           # 项目文档介绍
 ├── include                        # 项目公共头文件      
-│   ├── aicpu_common               # aicpu公共函数头文件        
-│   └── op_common                  # op_common源码头文件
+│   └── aicpu_common               # aicpu公共函数头文件        
 ├── LICENSE
 ├── pkg_inc                        # 项目公共头文件            
 │   └── op_common                  # op_common源码头文件
