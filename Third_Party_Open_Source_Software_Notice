@@ -315,6 +315,8 @@ Official Repository: https://github.com/cann/air/
 Usage: 
 aicpu_common/context/cpu_proto/proto/cpu_attr.proto
 aicpu_common/context/cpu_proto/proto/cpu_tensor.proto
+aicpu_common/context/cpu_proto/proto/cpu_node_def.proto
+aicpu_common/context/cpu_proto/proto/cpu_tensor_shape.proto
 
 Copyright Notice(s): 
 Copyright (C) 2019-2020. Huawei Technologies Co., Ltd
@@ -524,20 +526,6 @@ Full License Text：
    See the License for the specific language governing permissions and
    limitations under the License.
 
-Software :mindspore 1.0.0
-
-Official Repository: https://gitee.com/mindspore/mindspore
-
-Usage: 
-aicpu_common/context/cpu_proto/proto/cpu_node_def.proto
-aicpu_common/context/cpu_proto/proto/cpu_tensor_shape.proto
-
-Copyright Notice(s): 
-Copyright (C) 2019-2020. Huawei Technologies Co., Ltd
-
-License: Apache License V2.0
-Please see above
-
 Software :graphengine 1.5.1
 
 Official Repository: https://gitee.com/mindspore/graphengine
@@ -547,6 +535,32 @@ op_common/op_host/util/fp16.cpp
 
 Copyright Notice(s): 
 Copyright (C) 2019-2020. Huawei Technologies Co., Ltd
+
+License: Apache License V2.0
+Please see above
+
+Software :metadef 03e99ae
+
+Official Repository: https://gitee.com/ascend/metadef
+
+Usage: 
+include/aicpu_common/context/common/cpu_types.h
+
+Copyright Notice(s): 
+Copyright (C) 2019-2020. Huawei Technologies Co., Ltd
+
+License: Apache License V2.0
+Please see above
+
+Software :tensorflow
+
+Official Repository: https://github.com/tesnorflow/tensorflow
+
+Usage: 
+include/aicpu_common/context/common/notification.h
+
+Copyright Notice(s): 
+Copyright 2015 The TensorFlow Authors
 
 License: Apache License V2.0
 Please see above
