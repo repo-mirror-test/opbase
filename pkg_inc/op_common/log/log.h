@@ -129,11 +129,109 @@ typename std::enable_if<IsContextType<T>(), std::string>::type GetOpInfo(T conte
         REPORT_INNER_ERR_MSG("EZ9999", ##__VA_ARGS__); \
     } while (0)
 
-#define OP_LOGE_WITH_ERRCODE(opName, errCode, ...)                              \
-    do {                                                                        \
-        OP_LOGE_WITHOUT_REPORT(opName, ##__VA_ARGS__);                          \
-        REPORT_INNER_ERR_MSG(std::to_string(errCode).c_str(), ##__VA_ARGS__);   \
+/**
+ * opName:string
+ * index:int
+ * incorrectShape:string
+ * correctShape:string
+ * errMessage:OP[opName] indexth input has incorrect shape[incorrectShape], it should be[correctShape].
+ */
+#define OP_LOGE_WITH_INVALID_INPUT_SHAPE(opName, index, incorrectShape, correctShape)                      \
+    do {                                                                                                   \
+        std::string index_str = std::to_string(index);                                                     \
+        OP_LOGE_WITHOUT_REPORT(opName, "OP[%s] %sth input has incorrect shape[: %s], it should be[: %s].", \
+                               opName, index_str.c_str(), incorrectShape, correctShape);                   \
+        REPORT_INNER_ERR_MSG("EZ0001", "OP[%s] %sth input has incorrect shape[: %s], it should be[: %s].", \
+                             opName, index_str.c_str(), incorrectShape, correctShape);                     \
     } while (0)
+
+/**
+ * opName:string
+ * attrName:string
+ * incorrectVal:string
+ * correctVal:string
+ * errMessage:OP[opName] attr[: attrName], has incorrect value[: incorrectVal], it should be[: correctVal].
+ */
+#define OP_LOGE_WITH_INVALID_ATTR(opName, attrName, incorrectVal, correctVal)                               \
+    do {                                                                                                    \
+        OP_LOGE_WITHOUT_REPORT(opName, "OP[%s] attr[: %s], has incorrect value[: %s], it should be[: %s].", \
+                               opName, attrName, incorrectVal, correctVal);                                 \
+        REPORT_INNER_ERR_MSG("EZ0002", "OP[%s] attr[: %s], has incorrect value[: %s], it should be[: %s].", \
+                             opName, attrName, incorrectVal, correctVal);                                   \
+    } while (0)
+
+/**
+ * opName:string
+ * attrName:string
+ * incorrectSize:string
+ * correctSize:string
+ * errMessage:OP[opName] attr[: attrName], has incorrect size[: incorrectSize], it should be[: correctSize].
+ */
+#define OP_LOGE_WITH_INVALID_ATTR_SIZE(opName, attrName, incorrectSize, correctSize)                       \
+    do {                                                                                                   \
+        OP_LOGE_WITHOUT_REPORT(opName, "OP[%s] attr[: %s], has incorrect size[: %s], it should be[: %s].", \
+                               opName, attrName, incorrectSize, correctSize);                              \
+        REPORT_INNER_ERR_MSG("EZ0003", "OP[%s] attr[: %s], has incorrect size[: %s], it should be[: %s].", \
+                             opName, attrName, incorrectSize, correctSize);                                \
+    } while (0)
+
+/**
+ * opName:string
+ * paramName:string
+ * errMessage:OP[opName] get [paramName] failed.
+ */
+#define OP_LOGE_WITH_INVALID_INPUT(opName, paramName)                                 \
+    do {                                                                              \
+        OP_LOGE_WITHOUT_REPORT(opName, "OP[%s] get [%s] failed.", opName, paramName); \
+        REPORT_INNER_ERR_MSG("EZ0004", "OP[%s] get [%s] failed.", opName, paramName); \
+    } while (0)
+
+/**
+ * opName:string
+ * index:int
+ * incorrectSize:string
+ * correctSize:string
+ * errMessage:OP[opName] indexth input has incorrect shape size[: incorrectSize], it should be[: correctSize].
+ */
+#define OP_LOGE_WITH_INVALID_INPUT_SHAPESIZE(opName, index, incorrectSize, correctSize)                         \
+    do {                                                                                                        \
+        std::string index_str = std::to_string(index);                                                          \
+        OP_LOGE_WITHOUT_REPORT(opName, "OP[%s] %sth input has incorrect shape size[: %s], it should be[: %s].", \
+                               opName, index_str.c_str(), incorrectSize, correctSize);                          \
+        REPORT_INNER_ERR_MSG("EZ0005", "OP[%s] %sth input has incorrect shape size[: %s], it should be[: %s].", \
+                             opName, index_str.c_str(), incorrectSize, correctSize);                            \
+    } while (0)
+
+/**
+ * opName:string
+ * paramName:string
+ * dataFormat:string
+ * expectedFormatList:string
+ * errMessage:OP[opName] paramName has incorrect format[: dataFormat], it should be expectedFormatList.
+ */
+#define OP_LOGE_WITH_INVALID_INPUT_FORMAT(opName, paramName, dataFormat, expectedFormatList)     \
+    do {                                                                                         \
+        OP_LOGE_WITHOUT_REPORT(opName, "OP[%s] %s has incorrect format[: %s], it should be %s.", \
+                               opName, paramName, dataFormat, expectedFormatList);               \
+        REPORT_INNER_ERR_MSG("EZ0006", "OP[%s] %s has incorrect format[: %s], it should be %s.", \
+                             opName, paramName, dataFormat, expectedFormatList);                 \
+    } while (0)
+
+/**
+ * opName:string
+ * paramName:string
+ * dataDtype:string
+ * expectedDtypeList:string
+ * errMessage:OP[opName] paramName has incorrect dtype[: dataDtype], it should be expectedDtypeList.
+ */
+#define OP_LOGE_WITH_INVALID_INPUT_DTYPE(opName, paramName, dataDtype, expectedDtypeList)       \
+    do {                                                                                        \
+        OP_LOGE_WITHOUT_REPORT(opName, "OP[%s] %s has incorrect dtype[: %s], it should be %s.", \
+                               opName, paramName, dataDtype, expectedDtypeList);                \
+        REPORT_INNER_ERR_MSG("EZ0007", "OP[%s] %s has incorrect dtype[: %s], it should be %s.", \
+                             opName, paramName, dataDtype, expectedDtypeList);                  \
+    } while (0)
+
 #define OP_LOGD(opName, ...) D_OP_LOGD(Ops::Base::GetOpInfo(opName), __VA_ARGS__)
 #define OP_CHECK_IF(condition, log, return_expr) \
     do {                                         \
