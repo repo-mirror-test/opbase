@@ -4,7 +4,7 @@
 
 本章提供了**实现aclnn API**所需的**框架基础能力接口**，比如算子执行器（opExecutor）处理、数据类型/格式/shape等，具体参见下表罗列的接口、常用宏和常用类等。
 
-**头文件说明**：调用本章接口时请按实际情况include依赖的头文件，头文件路径为\$\{INSTALL\_DIR\}/include目录。其中\$\{INSTALL\_DIR\}请替换为CANN软件安装后的文件存储路径。若安装Ascend-cann-toolkit软件包，以root安装举例，安装后文件存储路径为`/usr/local/Ascend/ascend-toolkit/latest`。
+**头文件说明**：调用本章接口时请按实际情况include依赖的头文件，头文件路径为\$\{INSTALL\_DIR\}/include目录。其中\$\{INSTALL\_DIR\}请替换为CANN软件安装后的文件存储路径。若安装Ascend-cann-toolkit软件包，以root安装举例，安装后文件存储路径为`/usr/local/Ascend/cann`。
 
 **表 1**  框架能力接口列表
 
