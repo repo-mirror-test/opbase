@@ -4,8 +4,9 @@
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+ * the software repository for the full text of the License.
  */
 #include "cust_dlog_record.h"
 
@@ -75,56 +76,43 @@ std::shared_ptr<CpuKernelContext> CustCpuKernelDlogUtils::GetCpuKernelContext() 
   }
   return nullptr;
 }
-}  // namespace aicpu
 
-int32_t CheckLogLevel(int32_t module_id, int32_t log_level) {
-  (void)module_id;
-  (void)log_level;
-  return 1;
-}
+void CustCpuKernelDlogUtils::DumpLog(int32_t module_id, int32_t level, const char *fmt, va_list args) {
+  const auto it = module_to_string_map_.find(module_id);
+  const std::string module_name = (it != module_to_string_map_.end()) ? it->second : "UNKNOWN_MODULE";
 
-void DlogRecord(int32_t module_id, int32_t level, const char *fmt, ...) {
-  aicpu::CustCpuKernelDlogUtils &cust_dlog = aicpu::CustCpuKernelDlogUtils::GetInstance();
-
-  auto it = cust_dlog.module_to_string_map_.find(module_id);
-  std::string module_name = (it != cust_dlog.module_to_string_map_.end()) ? it->second : "UNKNOWN_MODULE";
-
-  std::shared_ptr<aicpu::CpuKernelContext> ctx = cust_dlog.GetCpuKernelContext();
+  const std::shared_ptr<CpuKernelContext> ctx = GetCpuKernelContext();
   if (ctx == nullptr) {
     return;
   }
 
-  va_list args;
-  va_start(args, fmt);
-
   char formatted_msg[kMaxLogLen];
   int32_t len = snprintf_s(formatted_msg, kMaxLogLen, kMaxLogLen - 1, "[%s]", module_name.c_str());
   if (len < 0 || len >= kMaxLogLen) {
-    va_end(args);
     return;
   }
 
   len += vsnprintf_s(formatted_msg + len, kMaxLogLen - len, kMaxLogLen - len - 1, fmt, args);
   if (len < 0 || len >= kMaxLogLen) {
-    va_end(args);
     return;
   }
 
   switch (level) {
     case DLOG_DEBUG:
-      aicpu::CustCpuKernelUtils::CustLogDebug(*ctx, formatted_msg);
+      CustCpuKernelUtils::CustLogDebug(*ctx, formatted_msg);
       break;
     case DLOG_INFO:
-      aicpu::CustCpuKernelUtils::CustLogInfo(*ctx, formatted_msg);
+      CustCpuKernelUtils::CustLogInfo(*ctx, formatted_msg);
       break;
     case DLOG_WARN:
-      aicpu::CustCpuKernelUtils::CustLogWarning(*ctx, formatted_msg);
+      CustCpuKernelUtils::CustLogWarning(*ctx, formatted_msg);
       break;
     case DLOG_ERROR:
-      aicpu::CustCpuKernelUtils::CustLogError(*ctx, formatted_msg);
+      CustCpuKernelUtils::CustLogError(*ctx, formatted_msg);
       break;
     default:
       break;
   }
-  va_end(args);
 }
+
+}  // namespace aicpu

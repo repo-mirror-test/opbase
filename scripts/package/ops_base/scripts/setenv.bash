@@ -5,23 +5,24 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 param_mult_ver=$1
 REAL_SHELL_PATH=`realpath ${BASH_SOURCE[0]}`
-CANN_PATH=$(cd $(dirname ${REAL_SHELL_PATH})/../../ && pwd)
-if [ -d "${CANN_PATH}/ops_base" ] && [ -d "${CANN_PATH}/../latest" ]; then
-    INSATLL_PATH=$(cd $(dirname ${REAL_SHELL_PATH})/../../../ && pwd)
-    if [ -L "${INSATLL_PATH}/latest/ops_base" ]; then
-        _ASCEND_OPS_BASE_PATH=`cd ${CANN_PATH}/ops_base && pwd`
+CANN_PATH=$(cd $(dirname ${REAL_SHELL_PATH})/../../../../ && pwd)
+if [ -d "${CANN_PATH}" ] && [ -d "${CANN_PATH}/../cann" ]; then
+    INSATLL_PATH=$(cd $(dirname ${REAL_SHELL_PATH})/../../../../../ && pwd)
+    if [ -d "${INSATLL_PATH}/cann" ]; then
+        _ASCEND_OPS_BASE_PATH=`cd ${CANN_PATH} && pwd`
         if [ "$param_mult_ver" = "multi_version" ]; then
-            _ASCEND_OPS_BASE_PATH=`cd ${INSATLL_PATH}/latest/ops_base && pwd`
+            _ASCEND_OPS_BASE_PATH=`cd ${INSATLL_PATH}/cann && pwd`
         fi
     fi
-elif [ -d "${CANN_PATH}/ops_base" ]; then
-    _ASCEND_OPS_BASE_PATH=`cd ${CANN_PATH}/ops_base && pwd`
+elif [ -d "${CANN_PATH}" ]; then
+    _ASCEND_OPS_BASE_PATH=`cd ${CANN_PATH} && pwd`
 fi  
 
 export ASCEND_OPS_BASE_PATH=${_ASCEND_OPS_BASE_PATH}

@@ -4,8 +4,9 @@
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+ * the software repository for the full text of the License.
  */
 
 /*!
@@ -56,6 +57,7 @@ struct FunBase {
     constexpr static int TempSize = tempSize;
     constexpr static int FixedSize = fixedBuf;
     constexpr static bool IsAdvanced = isAdvanced;
+    constexpr static int FuncType = 0;
 
     // 数据类型列表
     using DataTypes = Ops::Base::Elems<DataType_...>;
@@ -215,6 +217,9 @@ struct Cast : public ElemwiseUnaryOP<R, T> {
         AscendC::Cast(dst, src, static_cast<AscendC::RoundMode>(roundMode), count);
 #endif
     }
+    __aicore__ inline Cast(R& dst, T& scalar, int count) {
+        dst = static_cast<R>(scalar);
+    }
 };
 
 template <class T>
@@ -261,6 +266,9 @@ struct Sqrt : public ElemwiseUnaryOP<T, T> {
 
 template <class T>
 struct ReduceOp : public ElemwiseUnaryOP<T, T> {
+    constexpr static int FuncType = 1;
+    __aicore__ inline ReduceOp() {}
+
     __aicore__ inline ReduceOp(LocalTensor<T>& dst, LocalTensor<T>& src, int count)
     {
 #ifdef __CCE_AICORE__
@@ -322,6 +330,7 @@ struct Adds : public ElemwiseBinaryOP<T, T, T> {
     __aicore__ inline Adds(T& dst, T& scalar0, T& scalar1, int count)
     {
         dst = scalar0 + scalar1;
+        ;
     }
 };
 
@@ -433,6 +442,7 @@ struct Muls : public ElemwiseBinaryOP<T, T, T> {
     __aicore__ inline Muls(T& dst, T& scalar0, T& scalar1, int count)
     {
         dst = scalar0 * scalar1;
+        ;
     }
 };
 
@@ -478,6 +488,7 @@ struct Divs : public ElemwiseBinaryOP<T, T, T> {
     __aicore__ inline Divs(T& dst, T& scalar0, T& scalar1, int count)
     {
         dst = scalar0 / scalar1;
+        ;
     }
 };
 
@@ -500,6 +511,7 @@ struct Subs : public ElemwiseBinaryOP<T, T, T> {
     __aicore__ inline Subs(T& dst, T& scalar0, T& scalar1, int count)
     {
         dst = scalar0 - scalar1;
+        ;
     }
 };
 
@@ -823,9 +835,9 @@ struct IsCopyOutOp<CopyOut<T>> {
     constexpr static bool Value = true;
 };
 
-template <class T>
-struct IsCopyOutOp<ReduceOp<T>> {
-    constexpr static bool Value = true;
+template <typename U, template <typename, int...> typename T>
+struct IsCopyOutOp<T<U>> {
+  constexpr static bool Value = T<U>::FuncType == 1;
 };
 
 template <class... T>
@@ -833,10 +845,11 @@ struct IsReduceOp {
     constexpr static bool Value = false;
 };
 
-template <class T>
-struct IsReduceOp<ReduceOp<T>> {
-    constexpr static bool Value = true;
+template <typename U, template <typename, int...> typename T>
+struct IsReduceOp<T<U>> {
+  constexpr static bool Value = T<U>::FuncType == 1;
 };
+
 
 template <class... T>
 struct IsDuplicateOp {

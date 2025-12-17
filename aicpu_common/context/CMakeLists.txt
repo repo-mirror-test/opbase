@@ -29,6 +29,7 @@ set (local_context_src_files
     ${CMAKE_CURRENT_SOURCE_DIR}/common/async_event_util.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/common/async_cpu_kernel.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/cust_op/cust_op_log.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/cust_op/cust_dlog_record.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/utils/bcast.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/utils/eigen_tensor.cc
     ${CMAKE_CURRENT_SOURCE_DIR}/utils/kernel_util.cc
@@ -39,13 +40,7 @@ set(local_context_inc_path
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/aicpu_common/context/common
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/aicpu_common/context/cpu_proto
   ${CMAKE_CURRENT_SOURCE_DIR}/../../include/aicpu_common/context/utils
-
-  # cce/aicpu_engine_struct.h, cce/fwk_adpt_struct.h
-  ${ASCEND_HOME_PATH}/include/experiment
-  # aicpu_task_struct.h
-  ${ASCEND_HOME_PATH}/include/experiment/datagw/aicpu/common
-  ${ASCEND_HOME_PATH}/include/experiment/datagw/aicpu/aicpu_schedule/aicpu_sharder
-
+  ${CMAKE_CURRENT_SOURCE_DIR}/../../include/aicpu_common/context/cust_op
   ${C_SEC_INCLUDE}
 )
 

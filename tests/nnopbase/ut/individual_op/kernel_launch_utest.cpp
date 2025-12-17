@@ -1,0 +1,92 @@
+/**
+ * Copyright (c) 2025 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and contiditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+#include <gtest/gtest.h>
+#include "executor/indv_bininfo.h"
+#include "executor/indv_executor.h"
+#include <fstream>
+#include "utils/file_faker.h"
+#include "runtime/runtime/kernel.h"
+
+class NnopbaseKernelLaunchUt : public testing::Test {
+protected:
+    void SetUp() {}
+    void TearDown() {}
+};
+
+TEST_F(NnopbaseKernelLaunchUt, test)
+{
+    NnopbaseSetStubFiles(OP_API_COMMON_UT_SRC_DIR);
+    NnopbaseBinInfo *p = new NnopbaseBinInfo;
+    auto &binInfo = *p;
+    binInfo.binHandles[0] = (void *)0x0002;
+    binInfo.bin = new unsigned char[10];
+    binInfo.binLen = 1;
+
+    binInfo.coreType = kMix;
+    binInfo.hasReg[0] = false;
+    binInfo.isStaticShape = false;
+
+    nlohmann::json binJson = nlohmann::json::parse(R"(
+        {
+            "coreType": "VectorCore",
+            "kernelList": [
+                {
+                    "kernelName": "AddCustom_1e04ee05ab491cc5ae9c3d5c9ee8950b_1"
+                }
+            ],
+            "filePath": "ascend910b/add_custom/AddCustom_402e355eb717124771cfc7dbebfe946c.json",
+            "supportInfo": {
+                "simplifiedKey": [
+                    "AddCustom/d=0,p=0/3,2/3,2/3,2"
+                ]
+            }
+        }  
+        )");
+    std::ofstream file("test.json");
+    file << binJson.dump(4);
+    file.close();
+    
+    binInfo.binPath = "test.o";
+    static NnopbaseBinCollecter *gBinCollecter = nullptr;
+    if (gBinCollecter == nullptr) {
+        gBinCollecter = new NnopbaseBinCollecter;
+        ASSERT_NE(gBinCollecter, nullptr);
+        auto ret = NnopbaseCollecterInit(gBinCollecter);
+        ASSERT_EQ(ret, OK);
+        ret = NnopbaseCollecterWork(gBinCollecter);
+        ASSERT_EQ(ret, OK);
+    }
+    NnopbaseExecutor *executor = new NnopbaseExecutor;
+    NnopbaseExecutorSetCollecter(executor, gBinCollecter);
+    executor->collecter->isAscend19x1 = true;
+    executor->collecter->oppPath = "/usr/local/Ascend/latest/opp";
+    executor->collecter->socVersion = "ascend910b";
+    EXPECT_EQ(NnopbaseKernelRegister(executor, &binInfo), OK);
+    EXPECT_EQ(nnopbase::GetMagicFormBin(true, &binInfo), "RT_DEV_BINARY_MAGIC_ELF");
+    EXPECT_EQ(binInfo.hasReg[0], true);
+    EXPECT_EQ(NnopbaseKernelRegister(executor, &binInfo), OK);
+
+    binInfo.coreType = kAicore;
+    binInfo.hasReg[0] = false;
+    EXPECT_EQ(NnopbaseKernelRegister(executor, &binInfo), OK);
+    EXPECT_EQ(nnopbase::GetMagicFormBin(true, &binInfo), "RT_DEV_BINARY_MAGIC_ELF_AICUBE");
+
+    binInfo.coreType = kVectorcore;
+    binInfo.hasReg[0] = false;
+    EXPECT_EQ(NnopbaseKernelRegister(executor, &binInfo), OK);
+    EXPECT_EQ(nnopbase::GetMagicFormBin(true, &binInfo), "RT_DEV_BINARY_MAGIC_ELF_AIVEC");
+
+    binInfo.coreType = kCoreTypeEnd;
+    binInfo.hasReg[0] = false;
+    EXPECT_EQ(NnopbaseKernelRegister(executor, &binInfo), OK);
+    NnopbaseBinInfoDestroy(&p);
+    delete executor;
+    NnopbaseUnsetEnvAndClearFolder();
+}

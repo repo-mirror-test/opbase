@@ -30,6 +30,9 @@
 |  依赖  | 不涉及  | cmake/third_party/protobuf.cmake | https://gitcode.com/cann-src-third-party/protobuf/releases/download/v3.13.0/protobuf-3.13.0.tar.gz | 从gitcode下载protobuf源码，作用编译依赖 |
 |  依赖  | 不涉及  | cmake/third_party/gtest.cmake | https://gitcode.com/cann-src-third-party/googletest/releases/download/v1.14.0/googletest-1.14.0.tar.gz | 从gitcode下载googletest源码，作用编译依赖 |
 |  依赖  | 不涉及  | cmake/third_party/eigen.cmake | https://gitcode.com/cann-src-third-party/eigen/releases/download/3.4.0/eigen-3.4.0.tar.gz | 从gitcode下载eigen源码，作用编译依赖 |
+|  依赖  | 不涉及  | cmake/third_party/nlohmann_json.cmake | https://gitcode.com/cann-src-third-party/json/releases/download/v3.11.3/include.zip | 从gitcode下载json源码，作用编译依赖 |
+|  依赖  | 不涉及  | cmake/third_party/boost.cmake | https://gitcode.com/cann-src-third-party/boost/releases/download/v1.87.0/boost_1_87_0.tar.gz | 从gitcode下载boost源码，作用编译依赖 |
+|  依赖  | 不涉及  | cmake/third_party/mockcpp.cmake | https://gitcode.com/cann-src-third-party/mockcpp/releases/download/v2.7-h2/mockcpp-2.7.tar.gz | 从gitcode下载mockcpp源码，作用编译依赖 |
 |  依赖  | 不涉及  | cmake | https://apt.kitware.com/keys/kitware-archive-latest.asc | 从kitware下载cmake软件，作用编译依赖 |
 |  依赖  | 不涉及  | cmake | https://apt.kitware.com/ubuntu/ | 从kitware下载cmake软件，作用编译依赖 |
 ---

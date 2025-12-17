@@ -3,6 +3,13 @@ project(ops_base VERSION 1.0.0)
 include(CMakePrintHelpers)
 
 set(CMAKE_CXX_STANDARD 17)
+
+find_program(CCACHE_PROGRAM ccache)
+if(CCACHE_PROGRAM)
+  set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+  set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+endif()
+
 if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
     message(STATUS "Build ops_base with dependency cann pkgs installed")
     option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG "Build ops_base with dependency cann pkgs installed" TRUE)
@@ -11,25 +18,17 @@ else()
     option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG "Build ops_base need cann source code" FALSE)
 endif()
 
-set(OPEN_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../open_source")
-if(NOT EXISTS ${OPEN_SOURCE_DIR})
-    message(STATUS "Build ops_base with dependency communtiy cann pkgs installed")
-    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG_COMMUNITY "Build ops_base with dependency communtiy cann pkgs installed" TRUE)
-else()
-    message(STATUS "Build ops_base with dependency communtiy cann pkgs not installed")
-    option(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG_COMMUNITY "Build ops_base with dependency communtiy cann pkgs not installed" FALSE)
-endif()
+get_filename_component(OPEN_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../open_source" REALPATH)
 
+include(cmake/config.cmake)
 include(cmake/intf_pub_linux.cmake)
 include(cmake/variables.cmake)
-include(cmake/config.cmake)
 message(STATUS "Variables in ${CMAKE_PROJECT_NAME} project:")
 cmake_print_variables(BUILD_WITH_DEPENDENCY_SOURCE)
 cmake_print_variables(CANN_3RD_LIB_PATH)
 cmake_print_variables(CANN_3RD_PKG_PATH)
 
 if(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG)
-    
     message(STATUS "ENV: $ENV{ASCEND_HOME_PATH}")
     if(DEFINED ENV{ASCEND_HOME_PATH} AND NOT "$ENV{ASCEND_HOME_PATH}" STREQUAL "")
         set(ASCEND_HOME_PATH $ENV{ASCEND_HOME_PATH})
@@ -40,17 +39,31 @@ if(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG)
             set(ASCEND_HOME_PATH $ENV{HOME}/Ascend/latest)
         endif() 
     endif()
-    if(ENABLE_UT)
-        add_subdirectory(tests/ut)
+
+    if(DEFINED ENV{TOOLCHAIN_DIR})
+        set(TOOLCHAIN_DIR $ENV{TOOLCHAIN_DIR})
+    else()
+        if(MINRC)
+            set(TOOLCHAIN_DIR /usr)
+        else()
+            set(TOOLCHAIN_DIR ${ASCEND_HOME_PATH}/toolkit/toolchain/hcc)
+        endif()
     endif()
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/protobuf.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/eigen.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/nlohmann_json.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/func.cmake)
 
     include_directories(
         ${OPS_BASE_INCLUDE}
         ${OPS_BASE_INCLUDE}/op_common
         ${ASCEND_HOME_PATH}/include
+        ${ASCEND_HOME_PATH}/include/external
         ${ASCEND_HOME_PATH}/include/base
         ${ASCEND_HOME_PATH}/include/toolchain
+        ${ASCEND_HOME_PATH}/pkg_inc
         ${ASCEND_HOME_PATH}/pkg_inc/base
+        ${ASCEND_HOME_PATH}/pkg_inc/aicpu/aicpu_schedule
     )
 
     add_library(ops_base SHARED ${OPS_BASE_SRC})
@@ -58,10 +71,6 @@ if(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG)
         PRIVATE
         -fPIC
         -fvisibility=hidden
-    )
-    target_compile_definitions(ops_base
-        PRIVATE
-        LOG_CPP
     )
     target_link_libraries(ops_base
         PRIVATE
@@ -75,25 +84,21 @@ if(BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG)
         ${ASCEND_HOME_PATH}/lib64/libtiling_api.a
         -Wl,--no-whole-archive
         $<BUILD_INTERFACE:intf_pub_cxx17>
-        ${ASCEND_HOME_PATH}/lib64/libascendalog.so
+        ${ASCEND_HOME_PATH}/lib64/libunified_dlog.so
     )
 
-    if(DEFINED ENV{TOOLCHAIN_DIR})
-        set(TOOLCHAIN_DIR $ENV{TOOLCHAIN_DIR})
-    else()
-        if(MINRC)
-            set(TOOLCHAIN_DIR /usr)
-        else()
-            set(TOOLCHAIN_DIR ${ASCEND_HOME_PATH}/toolkit/toolchain/hcc)
-        endif()
-    endif()
-    include(cmake/func.cmake)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/protobuf.cmake)
-    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/eigen.cmake)
     add_subdirectory(aicpu_common/context)
     add_subdirectory(aicpu_common/folding)
+    target_compile_definitions(ops_base PRIVATE
+        BUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG
+    )
 
-    include(cmake/package.cmake)
+    if(ENABLE_UT OR ENABLE_ST)
+        add_subdirectory(tests)
+    else()
+        add_subdirectory(src/nnopbase)
+        include(cmake/package.cmake)
+    endif()
 else()
     message(STATUS "Build ops_base_objs only from other source code")
 
@@ -114,9 +119,9 @@ else()
         PRIVATE
         ${OPS_BASE_INCLUDE}
         ${OPBASE_METADEF_INC}
-        ${C_SEC_INCLUDE}
         ${ASCEND_DIR}/include/toolchain
         ${ASCEND_DIR}/pkg_inc/base
+        ${C_SEC_INCLUDE}
     )
     target_compile_options(ops_base_infer_objs
         PRIVATE
@@ -133,9 +138,9 @@ else()
         PRIVATE
         ${OPS_BASE_INCLUDE}
         ${OPBASE_METADEF_INC}
-        ${C_SEC_INCLUDE}
         ${ASCEND_DIR}/include/toolchain
         ${ASCEND_DIR}/pkg_inc/base
+        ${C_SEC_INCLUDE}
     )
     target_compile_options(ops_base_tiling_objs
         PRIVATE
@@ -153,9 +158,9 @@ else()
         PRIVATE
         ${OPS_BASE_INCLUDE}
         ${OPBASE_METADEF_INC}
-        ${C_SEC_INCLUDE}
         ${ASCEND_DIR}/include/toolchain
         ${ASCEND_DIR}/pkg_inc/base
+        ${C_SEC_INCLUDE}
     )
     target_compile_options(ops_base_util_objs
         PRIVATE

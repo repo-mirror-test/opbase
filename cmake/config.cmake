@@ -4,18 +4,28 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
-option(ENABLE_DEBUG "Enable debug" OFF)
+if(ENABLE_UT OR ENABLE_ST)
+    set(DEFAULT_BUILD_TYPE "Debug")
+else()
+    set(DEFAULT_BUILD_TYPE "Release")
+endif()
+
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE "${DEFAULT_BUILD_TYPE}" CACHE STRING "Choose the build type: Release/Debug" FORCE)
+endif()
+
 set(BUILD_MODE "" CACHE STRING "build mode -O0/O1/O2/O3")
 if("${BUILD_MODE}" STREQUAL "-O0" OR "${BUILD_MODE}" STREQUAL "-O1" OR
    "${BUILD_MODE}" STREQUAL "-O2" OR "${BUILD_MODE}" STREQUAL "-O3"
   )
   set(COMPILE_OP_MODE ${BUILD_MODE})
 else()
-  if(ENABLE_UT)
+  if(ENABLE_UT OR ENABLE_ST)
     set(COMPILE_OP_MODE "-O0")
   else()
     set(COMPILE_OP_MODE "-O2")
@@ -27,11 +37,6 @@ add_compile_options(${COMPILE_OP_MODE})
 if(NOT "${COMPILE_OP_MODE}" STREQUAL "-O0")
     message(STATUS "ADD COMPILE_OPTIONS: -D_FORTIFY_SOURCE=2")
     add_compile_options(-D_FORTIFY_SOURCE=2 -fstack-protector-strong)
-endif()
-
-if(ENABLE_DEBUG OR ENABLE_UT)
-    add_compile_options(-g)
-    message(STATUS "ADD COMPILE_OPTIONS: -g")
 endif()
 
 add_compile_options(
@@ -60,6 +65,8 @@ else()
     -Wduplicated-branches -Wformat-signedness -Wreturn-local-addr)
 endif()
 
-if (ENABLE_UT)
+if (ENABLE_UT OR ENABLE_ST)
     include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/gtest.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/boost.cmake)
+    include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/mockcpp.cmake)
 endif ()

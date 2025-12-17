@@ -4,8 +4,9 @@
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+ * the software repository for the full text of the License.
  */
 #ifndef AICPU_CONTEXT_CUST_OP_CUST_DLOG_RECORD_H_
 #define AICPU_CONTEXT_CUST_OP_CUST_DLOG_RECORD_H_
@@ -17,9 +18,8 @@
 #include <string>
 #include <unordered_map>
 
-#include "cpu_context.h"
 #include "cust_cpu_utils.h"
-#include "toolchain/slog.h"
+#include "dlog_pub.h"
 
 namespace aicpu {
 class CustCpuKernelDlogUtils {
@@ -28,6 +28,7 @@ class CustCpuKernelDlogUtils {
   int32_t CustSetCpuKernelContext(uint64_t workspace_size, uint64_t workspace_addr);
   int64_t GetTid();
   std::shared_ptr<CpuKernelContext> GetCpuKernelContext();
+  void DumpLog(int32_t module_id, int32_t level, const char *fmt, va_list args);
   const std::unordered_map<int, std::string> module_to_string_map_;
 
  private:

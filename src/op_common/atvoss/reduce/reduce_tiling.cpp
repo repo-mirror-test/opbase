@@ -4,8 +4,9 @@
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+ * the software repository for the full text of the License.
  */
 
 /*!
@@ -511,7 +512,6 @@ void ReduceOpTiling::ComputeUnitA(const uint64_t* shape)
                 maxStep = (rate > THRES_HOLD && rate > maxRate) ? step : maxStep;
                 maxRate = rate > maxRate ? rate : maxRate;
             } else {
-                step = step > 1 ? step - 1 : step;
                 splitHere = true;
                 break;
             }
@@ -581,7 +581,7 @@ template <class Pattern>
 void ReduceOpTiling::ComputeProgressUnitA(const uint64_t* shape)
 {
     // if RAxis is fully loaded in UB, and basicBlock is not enough, we need to calculate extra unitA
-    if (unitR_.idx != -1 || Pattern::ID == PATTERN_A) {
+    if (unitR_.idx != -1) {
         return;
     }
     uint64_t axisLen = (unitA_.idx == cBlock_.axis ? cBlock_.cacheLineOuter : shape[unitA_.idx]);
@@ -589,6 +589,12 @@ void ReduceOpTiling::ComputeProgressUnitA(const uint64_t* shape)
     uint64_t outerA = unitA_.outer / CeilDiv(axisLen, unitA_.step) * axisLen;
     uint64_t bBlockNum = basicBlock_ * Ratio() / opDag_.maxInputBytes;
     uint64_t maxInnerA = resultBlock_ / opDag_.maxInputBytes;
+    uint64_t dSize = ge::GetSizeByDataType(opInput_.inputDtype);
+    if (dSize == 0) {
+        OP_LOGE(context_->GetNodeName(), "dSize:%lu is equal to 0, not support.", dSize);
+        return;
+    }
+    uint64_t cacheSize = compileInfo_->cacheLineSize / dSize;
     uint64_t innerR = unitR_.inner;
     uint64_t step = 1;
     int32_t iA;
@@ -596,23 +602,28 @@ void ReduceOpTiling::ComputeProgressUnitA(const uint64_t* shape)
         axisLen = (iA == cBlock_.axis ? cBlock_.cacheLineOuter : shape[iA]);
         bool splitHere = false;
         step = (iA == unitA_.idx ? unitA_.step : 1UL);
-        for (uint64_t s = step + 1UL; s <= axisLen; s += 1UL) {
+        uint64_t maxStep = step;
+        for (uint64_t s = step + 1UL; s <= axisLen; s++) {
             uint64_t tmpInnerA = innerA * s;
             uint64_t tmpOuterA = outerA / axisLen * CeilDiv(axisLen, s);
             double rate = (double)tmpOuterA / (double)(CeilAlign(tmpOuterA, compileInfo_->vectorCoreNum));
             bool isContinue =
-                (rate > THRES_HOLD && tmpInnerA * innerR * cBlock_.aSize * cBlock_.rSize <= bBlockNum &&
+                (tmpInnerA * innerR * cBlock_.aSize * cBlock_.rSize <= bBlockNum &&
                  tmpInnerA * cBlock_.aSize <= maxInnerA);
             if (isContinue) {
+                if (tmpInnerA * cBlock_.aSize <= cacheSize) {
+                    maxStep = s;
+                } else {
+                    maxStep = rate >= THRES_HOLD ? s : maxStep;
+                }
                 continue;
             } else {
-                // update step
-                step = s > 1UL ? s - 1UL : s;
                 splitHere = true;
                 break;
             }
         }
         if (splitHere || iA - AXES_STEP < 0) {
+            step = maxStep;
             innerA *= step;
             outerA = outerA / axisLen * CeilDiv(axisLen, step);
             break;
@@ -806,10 +817,6 @@ void ReduceOpTiling::SetTilingData(const uint64_t* shape)
 template <class Pattern>
 int32_t ReduceOpTiling::IsUseNddma(const uint64_t* shape)
 {
-    if (Pattern::Dim == CONST2 || (Pattern::Dim == CONST3 && shape[0] == 1U)) {
-        // 两维场景不使能
-        return 0;
-    }
     int32_t axis = cBlock_.axis;
     uint64_t dSize = ge::GetSizeByDataType(opInput_.inputDtype);
     uint64_t ubBlockSize = compileInfo_->ubBlockSize / dSize;
@@ -817,8 +824,8 @@ int32_t ReduceOpTiling::IsUseNddma(const uint64_t* shape)
         // last dim 大于ubblock, 不做NDDMA
         return 0;
     }
-    if (Pattern::Dim - 1 - axis >= CONST2) {
-        // cacheline 切分最后两维之外，使用NDDMA
+    if ((Pattern::Dim - 1 - axis > CONST2) || (Pattern::Dim - 1 - axis == CONST2 && cBlock_.cacheLineStep != 1UL)) {
+        // cacheline切分超过3维，或者等于三维时，最高维不为1。即cacheline有效切分维度超过2维
         return 1;
     }
     if (Pattern::TailA) {

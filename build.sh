@@ -5,13 +5,15 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 BASEPATH=$(cd "$(dirname $0)"; pwd)
 BUILD_RELATIVE_PATH="build"
 BUILD_OUT="build_out"
+BUILD_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}/"
 CORE_NUMS=$(cat /proc/cpuinfo| grep "processor"| wc -l)
 
 # print usage message
@@ -25,16 +27,20 @@ usage() {
     echo $dotted_line
     echo "    -j<N>          Set the number of threads used for building ops_base, default is 8"
     echo "    -O<N>          Compile optimization options, support [O0 O1 O2 O3], default is O2"
-    echo "    --make_clean_all "
+    echo "    --make_clean "
     echo "                   Make clean and delete related file"
-    echo "    --debug        Build with debug mode"
+    echo "    --pkg          Build run package"
+    echo "    --build-type=<TYPE>"
+    echo "                   Specify build type (TYPE options: Release/Debug), Default: Release"
     echo "    --cann_3rd_lib_path=<PATH>"
     echo "                   Set ascend third_party package install path, default ./third_party"
     echo "Test Options:"
     echo $dotted_line
     echo "    -u             Build and run all unit tests"
+    echo "    -s             Build and run all system tests"
     echo "    --noexec       Only compile ut, do not execute"
     echo "    --cov          Enable code coverage for unit tests"
+    echo "    --asan         Enable AddressSanitizer"
     echo ""
 }
 
@@ -43,11 +49,13 @@ checkopts() {
     VERBOSE=""
     THREAD_NUM=8
     ENABLE_UT="off"
+    ENABLE_ST="off"
     MAKE_CLEAN_ALL="off"
     EXEC_TEST="off"
-    ENABLE_DEBUG="off"
+    BUILD_TYPE="Release"
     BUILD_MODE=""
     ENABLE_COVERAGE="off"
+    ENABLE_PKG_ASAN="off"
     if [[ -n "${ASCEND_HOME_PATH}" ]]; then
         echo "env exists ASCEND_HOME_PATH : ${ASCEND_HOME_PATH}"
     elif [ $UID -eq 0 ]; then
@@ -55,10 +63,10 @@ checkopts() {
     else
         export ASCEND_HOME_PATH=~/Ascend/latest
     fi
-    CANN_3RD_LIB_PATH="$BASEPATH/third_party"
+    CANN_3RD_LIB_PATH="${BASEPATH}/third_party"
 
     # Process the options
-    parsed_args=$(getopt -a -o j:hvuO: -l help,verbose,cov,make_clean_all,debug,noexec,cann_3rd_lib_path: -- "$@") || {
+    parsed_args=$(getopt -a -o j:hvusO: -l help,verbose,cov,make_clean,build-type:,noexec,pkg,asan,cann_3rd_lib_path: -- "$@") || {
     usage
     exit 1
     }
@@ -81,6 +89,13 @@ checkopts() {
         ;;
         -u)
         ENABLE_UT="on"
+        ENABLE_ST="off"
+        EXEC_TEST="on"
+        shift
+        ;;
+        -s)
+        ENABLE_UT="off"
+        ENABLE_ST="on"
         EXEC_TEST="on"
         shift
         ;;
@@ -92,13 +107,13 @@ checkopts() {
         ENABLE_COVERAGE="on"
         shift
         ;;
-        --make_clean_all)
+        --make_clean)
         MAKE_CLEAN_ALL="on"
         shift
         ;;
-        --debug)
-        ENABLE_DEBUG="on"
-        shift
+        --build-type)
+        BUILD_TYPE=$2
+        shift 2
         ;;
         --noexec)
         EXEC_TEST="off"
@@ -107,6 +122,13 @@ checkopts() {
         --cann_3rd_lib_path)
         CANN_3RD_LIB_PATH="$(realpath $2)"
         shift 2
+        ;;
+        --pkg)
+        shift
+        ;;
+        --asan)
+        ENABLE_PKG_ASAN="on"
+        shift
         ;;
         --)
         shift
@@ -129,11 +151,13 @@ mk_dir() {
 
 # ops_base build start
 cmake_generate_make() {
-    local build_path="$1"
-    local cmake_args="$2"
+    local source_path="$1"
+    local build_path="$2"
+    local cmake_args="$3"
     if [[ "${MAKE_CLEAN_ALL}" == "on" ]];then
         echo "clear all files in build directory"
         [ -d "${build_path}" ] && rm -rf "${build_path}"
+        [ -d "${BASEPATH}/third_party" ] && rm -rf "${BASEPATH}/third_party"
     fi
     mk_dir "${build_path}"
     cd "${build_path}"
@@ -142,7 +166,7 @@ cmake_generate_make() {
     [ -f cmake_install.cmake ] && rm cmake_install.cmake
     [ -d CMakeFiles ] && rm -rf CMakeFiles
     echo "${cmake_args}"
-    cmake ${cmake_args} ..
+    cmake ${cmake_args} ${source_path}
     if [ 0 -ne $? ]; then
         echo "execute command: cmake ${cmake_args} .. failed."
         exit 1
@@ -154,19 +178,20 @@ build_ops_base() {
     echo "create build directory and build ops_base"
     cd "${BASEPATH}"
 
-    BUILD_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}/"
     BUILD_OUT_PATH="${BASEPATH}/${BUILD_OUT}/"
     CMAKE_ARGS="\
     -DENABLE_UT=${ENABLE_UT} \
+    -DENABLE_ST=${ENABLE_ST} \
     -DBUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG=ON \
     -DCANN_3RD_LIB_PATH=${CANN_3RD_LIB_PATH} \
     -DPRODUCT_SIDE=device \
     -DDCMAKE_WGET_FLAGS='--no-check-certificate' \
-    -DENABLE_DEBUG=${ENABLE_DEBUG} \
+    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
     -DBUILD_MODE=${BUILD_MODE} \
+    -DENABLE_PKG_ASAN=${ENABLE_PKG_ASAN} \
     -DENABLE_COVERAGE=${ENABLE_COVERAGE}"
 
-    cmake_generate_make "${BUILD_PATH}" "${CMAKE_ARGS}"
+    cmake_generate_make "${BASEPATH}" "${BUILD_PATH}" "${CMAKE_ARGS}"
 
     make ${VERBOSE} -j${THREAD_NUM} && make package
 
@@ -186,6 +211,39 @@ build_ops_base() {
     echo "ops_base build success!"
 }
 
+build_ops_base_llt() {
+    echo "create build directory and build ops_base_llt"
+    cd "${BASEPATH}"
+
+    CMAKE_ARGS="\
+    -DENABLE_UT=${ENABLE_UT} \
+    -DENABLE_ST=${ENABLE_ST} \
+    -DBUILD_WITH_INSTALLED_DEPENDENCY_CANN_PKG=ON \
+    -DCANN_3RD_LIB_PATH=${CANN_3RD_LIB_PATH} \
+    -DPRODUCT_SIDE=device \
+    -DDCMAKE_WGET_FLAGS='--no-check-certificate' \
+    -DENABLE_DEBUG=${ENABLE_DEBUG} \
+    -DBUILD_MODE=${BUILD_MODE} \
+    -DENABLE_COVERAGE=${ENABLE_COVERAGE}"
+
+    cmake_generate_make "${BASEPATH}" "${BUILD_PATH}" "${CMAKE_ARGS}"
+
+    make ${VERBOSE} -j${THREAD_NUM}
+}
+
+# generate coverage for ut
+generate_llt_cov() {
+    echo "start to generate ut coverage for ops-base"
+    COVERAGE_SCRIPT="${BASEPATH}/scripts/util/generate_cpp_cov.sh"
+    COVERAGE_REPORT_PATH="${BUILD_PATH}/cov"
+    UT_COVERAGE_HTML_PATH="${COVERAGE_REPORT_PATH}/"
+    UT_COVERAGE_DATA_FILE="${COVERAGE_REPORT_PATH}/coverage.info"
+    mk_dir ${COVERAGE_REPORT_PATH}
+    mk_dir ${UT_COVERAGE_HTML_PATH}
+    source ${COVERAGE_SCRIPT} ${BUILD_PATH} ${UT_COVERAGE_DATA_FILE} ${UT_COVERAGE_HTML_PATH}
+    echo "finish to generate llt coverage for ops-base"
+}
+
 main() {
     cd "${BASEPATH}"
     checkopts "$@"
@@ -195,23 +253,75 @@ main() {
     fi
 
     g++ -v
-    echo "---------------- ops_base build start ----------------"
-    build_ops_base || { echo "ops_base build failed."; exit 1; }
-    echo "---------------- ops_base build finished ----------------"
+
+    if [[ "${ENABLE_UT}" == "on" || "${ENABLE_ST}" == "on" ]];then
+        echo "---------------- ops_base_llt build start ----------------"
+        build_ops_base_llt || { echo "ops_base_llt build failed."; exit 1; }
+        echo "---------------- ops_base_llt build finished ----------------"
+    else
+        echo "---------------- ops_base build start ----------------"
+        build_ops_base || { echo "ops_base build failed."; exit 1; }
+        echo "---------------- ops_base build finished ----------------"
+    fi
+    
     if [[ "${ENABLE_UT}" == "on" && "${EXEC_TEST}" == "on" ]];then
-        if [ -f "${BASEPATH}"/"${BUILD_RELATIVE_PATH}"/tests/ut/ops_base_ut ];then
+        if [ -f "${BASEPATH}"/"${BUILD_RELATIVE_PATH}"/tests/nnopbase/ut/nnopbase_utest ];then
             source "${ASCEND_HOME_PATH}/bin/setenv.bash"
             export LD_LIBRARY_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}"/:$LD_LIBRARY_PATH
-            cd "${BASEPATH}"/"${BUILD_RELATIVE_PATH}"/tests/ut/
-            ./ops_base_ut | tee ops_base_ut.log
-            if grep -q "\[  FAILED  \]" ops_base_ut.log; then
-                echo "Execute ops_base_ut failed."
+            cd "${BASEPATH}"/"${BUILD_RELATIVE_PATH}"/tests/nnopbase/ut/
+            ./nnopbase_utest | tee nnopbase_utest.log
+            if grep -q "\[  FAILED  \]" nnopbase_utest.log; then
+                echo "Execute nnopbase_utest failed."
                 exit 1
             fi
-            echo "Execute ops_base_ut successful."
+            echo "Execute nnopbase_utest successful."
         else
-            echo "ops_base_ut does not generated"
+            echo "nnopbase_utest does not generated"
             exit 1
+        fi
+
+        if [ -f "${BASEPATH}"/"${BUILD_RELATIVE_PATH}"/tests/op_common/op_common_utest ];then
+            source "${ASCEND_HOME_PATH}/bin/setenv.bash"
+            export LD_LIBRARY_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}"/:$LD_LIBRARY_PATH
+            cd "${BASEPATH}"/"${BUILD_RELATIVE_PATH}"/tests/op_common/
+            ./op_common_utest | tee op_common_utest.log
+            if grep -q "\[  FAILED  \]" op_common_utest.log; then
+                echo "Execute op_common_utest failed."
+                exit 1
+            fi
+            echo "Execute op_common_utest successful."
+        else
+            echo "op_common_utest does not generated"
+            exit 1
+        fi
+
+        echo "Execute ops_base_ut successful."
+        
+        if [[ "${ENABLE_COVERAGE}" == "on" ]];then
+            generate_llt_cov
+        fi
+    fi
+
+    if [[ "${ENABLE_ST}" == "on" && "${EXEC_TEST}" == "on" ]];then
+        if [ -f "${BASEPATH}"/"${BUILD_RELATIVE_PATH}"/tests/nnopbase/st/nnopbase_stest ];then
+            source "${ASCEND_HOME_PATH}/bin/setenv.bash"
+            export LD_LIBRARY_PATH="${BASEPATH}/${BUILD_RELATIVE_PATH}"/:$LD_LIBRARY_PATH
+            cd "${BASEPATH}"/"${BUILD_RELATIVE_PATH}"/tests/nnopbase/st/
+            ./nnopbase_stest | tee nnopbase_stest.log
+            if grep -q "\[  FAILED  \]" nnopbase_stest.log; then
+                echo "Execute nnopbase_stest failed."
+                exit 1
+            fi
+            echo "Execute nnopbase_stest successful."
+        else
+            echo "nnopbase_stest does not generated"
+            exit 1
+        fi
+
+        echo "Execute ops_base_st successful."
+        
+        if [[ "${ENABLE_COVERAGE}" == "on" ]];then
+            generate_llt_cov
         fi
     fi
 }

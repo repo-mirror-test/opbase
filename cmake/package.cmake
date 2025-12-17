@@ -4,8 +4,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 set_target_properties(ops_base PROPERTIES OUTPUT_NAME "ops_base")
@@ -29,7 +30,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/third_party/makeself-fetch.cmake)
 
 set(script_prefix ${CMAKE_CURRENT_SOURCE_DIR}/scripts/package/ops_base/scripts)
 install(DIRECTORY ${script_prefix}/
-    DESTINATION ops_base/script
+    DESTINATION share/info/ops_base/script
     FILE_PERMISSIONS
     OWNER_READ OWNER_WRITE OWNER_EXECUTE  # 文件权限
     GROUP_READ GROUP_EXECUTE
@@ -38,18 +39,19 @@ install(DIRECTORY ${script_prefix}/
     OWNER_READ OWNER_WRITE OWNER_EXECUTE  # 目录权限
     GROUP_READ GROUP_EXECUTE
     WORLD_READ WORLD_EXECUTE
+    REGEX "(setenv|prereq_check)\\.(bash|fish|csh)" EXCLUDE
 )
 set(SCRIPTS_FILES
     ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/check_version_required.awk
     ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/common_func.inc
-    ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/common_interface.bash
+    ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/common_interface.sh
     ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/common_interface.csh
     ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/common_interface.fish
     ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/version_compatiable.inc
 )
 
 install(FILES ${SCRIPTS_FILES}
-    DESTINATION ops_base/script
+    DESTINATION share/info/ops_base/script
 )
 set(COMMON_FILES
     ${CMAKE_SOURCE_DIR}/scripts/package/common/sh/install_common_parser.sh
@@ -71,15 +73,16 @@ set(LATEST_MANGER_FILES
 )
 set(CONF_FILES
     ${CMAKE_SOURCE_DIR}/scripts/package/common/cfg/path.cfg
+    ${CMAKE_SOURCE_DIR}/src/nnopbase/common/op_info_record/dump_tool_config.ini
 )
 install(FILES ${CMAKE_SOURCE_DIR}/version.info
-    DESTINATION .
+    DESTINATION share/info/ops_base
 )
 install(FILES ${CONF_FILES}
     DESTINATION ops_base/conf
 )
 install(FILES ${PACKAGE_FILES}
-    DESTINATION ops_base/script
+    DESTINATION share/info/ops_base/script
 )
 install(FILES ${LATEST_MANGER_FILES}
     DESTINATION latest_manager
@@ -96,7 +99,7 @@ set(BIN_FILES
     ${CMAKE_SOURCE_DIR}/scripts/package/ops_base/scripts/setenv.fish
 )
 install(FILES ${BIN_FILES}
-    DESTINATION ops_base/bin
+    DESTINATION share/info/ops_base/bin
 )
 
 set(opp_source ${CMAKE_SOURCE_DIR}/include)
@@ -116,18 +119,68 @@ install(DIRECTORY ${pkg_inc_src}/
 )
 install(TARGETS ops_base
         LIBRARY DESTINATION ops_base/lib)
-install(TARGETS aicpu_context
-        ARCHIVE DESTINATION ops_base/lib/aicpu_common)
-install(TARGETS aicpu_nodedef
-        ARCHIVE DESTINATION ops_base/lib/aicpu_common)
-install(TARGETS aicpu_context_host
-        ARCHIVE DESTINATION ops_base/lib/aicpu_common)
-install(TARGETS aicpu_nodedef_host
-        ARCHIVE DESTINATION ops_base/lib/aicpu_common)
+set(AICPU_LIBS
+    aicpu_context
+    aicpu_nodedef
+    aicpu_context_host
+    aicpu_nodedef_host
+    aicpu_cust_log
+)
+
+install(TARGETS ${AICPU_LIBS}
+    ARCHIVE DESTINATION ops_base/lib/aicpu_common
+)
+
 install(FILES ${PROTOBUF_STATIC_PKG_DIR}/lib/libbase_ascend_protobuf.a
     DESTINATION ops_base/lib/aicpu_common)
 install(FILES ${PROTOBUF_HOST_STATIC_PKG_DIR}/lib/libhost_ascend_protobuf.a
     DESTINATION ops_base/lib/aicpu_common)
+
+message(STATUS "ASCEND_HOME_PATH: $ENV{ASCEND_HOME_PATH}")
+get_filename_component(COMPILER_PATH $ENV{ASCEND_HOME_PATH}/compiler REALPATH)
+get_filename_component(VER_PATH "${COMPILER_PATH}" DIRECTORY)
+message(STATUS "VERSION PATH: ${VER_PATH}")
+
+set(aclnn_source ${CMAKE_SOURCE_DIR}/include/nnopbase/aclnn)
+install(DIRECTORY ${aclnn_source}/
+    DESTINATION ops_base/aclnn
+    FILE_PERMISSIONS
+    OWNER_READ OWNER_WRITE
+    GROUP_READ GROUP_EXECUTE
+)
+set(opdev_source ${CMAKE_SOURCE_DIR}/include/nnopbase/opdev)
+install(DIRECTORY ${opdev_source}/
+    DESTINATION ops_base/aclnn/opdev
+    FILE_PERMISSIONS
+    OWNER_READ OWNER_WRITE
+    GROUP_READ GROUP_EXECUTE
+)
+
+set(aclnnop_source ${CMAKE_SOURCE_DIR}/include/aclnnop)
+install(DIRECTORY ${aclnnop_source}/
+        DESTINATION ops_base/aclnnop
+        FILE_PERMISSIONS
+        OWNER_READ OWNER_WRITE
+        GROUP_READ GROUP_EXECUTE
+)
+install(DIRECTORY ${aclnnop_source}/
+        DESTINATION ops_base/aclnnop/level2
+        FILE_PERMISSIONS
+        OWNER_READ OWNER_WRITE
+        GROUP_READ GROUP_EXECUTE
+)
+
+install(TARGETS nnopbase
+   LIBRARY DESTINATION ops_base/lib/aclnn
+)
+
+install(TARGETS dummy_tls
+   LIBRARY DESTINATION ops_base/lib/aclnn
+)
+
+install(TARGETS stub_nnopbase
+   LIBRARY DESTINATION ops_base/stub
+)
 
 # ============= CPack =============
 set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")

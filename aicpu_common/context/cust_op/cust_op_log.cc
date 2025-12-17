@@ -4,8 +4,9 @@
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+ * the software repository for the full text of the License.
  */
 
 #include <cstdio>
@@ -18,9 +19,9 @@
 #include <mutex>
 #include <string>
 
-#include "cpu_context.h"
-#include "cust_cpu_utils.h"
 #include "securec.h"
+#include "cust_cpu_utils.h"
+#include "cust_dlog_record.h"
 namespace {
 constexpr char CUST_AICPU_OP[] = "CUST_AICPU_OP";
 constexpr int64_t TIME_THOUSAND_MS = 1000;
@@ -180,5 +181,12 @@ void CustCpuKernelUtils::CustLogError(aicpu::CpuKernelContext &ctx,
     WriteCustLog(ctx, ERROR, fmt, list);
     va_end(list);
   }
+}
+
+void CustCpuKernelUtils::DumpCustomLog(int32_t module_id, int32_t level, const char *fmt, ...) {
+  va_list args;
+  va_start(args, fmt);
+  aicpu::CustCpuKernelDlogUtils::GetInstance().DumpLog(module_id, level, fmt, args);
+  va_end(args);
 }
 }  // namespace aicpu

@@ -1,0 +1,193 @@
+/**
+ * Copyright (c) 2025 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and contiditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+
+#include <array>
+#include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <numeric>
+#include <set>
+#include <sstream>
+#include <string>
+#include <type_traits>
+#include <vector>
+
+#include "exe_graph/runtime/kernel_run_context.h"
+#include "exe_graph/runtime/storage_format.h"
+#include "exe_graph/runtime/tensor_data.h"
+#include "exe_graph/runtime/tiling_context.h"
+#include "opdev/data_type_utils.h"
+#include "opdev/format_utils.h"
+#include "block_pool.h"
+#include "kernel_utils.h"
+#include "op_ctx_def.h"
+#include "op_run_context.h"
+#include "opdev/object.h"
+#include "opdev/op_def.h"
+#include "opdev/op_errno.h"
+#include "opdev/op_log.h"
+#include "tilingctx_builder.h"
+
+namespace op {
+namespace internal {
+
+using BlockPool = internal::BlockPool;
+using OpImplFunctions = gert::OpImplKernelRegistry::OpImplFunctions;
+
+constexpr size_t TILING_INPUT_OTHER_NUM = 4;
+constexpr size_t TILING_PLATFORM_IDX = 3;
+constexpr size_t TILING_FUNC_IDX = 2;
+
+void TilingCtxHolder::BuildTilingCtx()
+{
+    // +1 for compiled info struct
+    size_t tilingCtxSize = sizeof(AsyncAnyValue *) * (MAX_OP_ARG_NUM + TILING_INPUT_OTHER_NUM + tilingOutputNum_) +
+                           sizeof(KernelRunContext);
+    tilingCtx_ = static_cast<KernelRunContext *>(malloc(tilingCtxSize));
+    OP_CHECK(tilingCtx_ != nullptr, OP_LOGE(ACLNN_ERR_INNER, "malloc failed. [%zu]", tilingCtxSize), return);
+    (void) memset_s(tilingCtx_, tilingCtxSize, 0, tilingCtxSize);
+    tilingCtx_->output_size = tilingOutputNum_;
+
+    size_t tilingValueSize = sizeof(AsyncAnyValue) * tilingOutputNum_;
+    tilingCtxValue_ = static_cast<AsyncAnyValue *>(malloc(tilingValueSize));
+    OP_CHECK(tilingCtxValue_ != nullptr, OP_LOGE(ACLNN_ERR_INNER, "malloc failed. [%zu]", tilingValueSize), return);
+    (void) memset_s(tilingCtxValue_, tilingValueSize, 0, tilingValueSize);
+
+    // launch_args|tiling_data
+    size_t tilingDataSize = LAUNCH_ARG_SIZE + MAX_TILING_DATA_SIZE + sizeof(TilingData);
+    tilingData_ = static_cast<TilingData *>(malloc(tilingDataSize));
+    OP_CHECK(
+        tilingData_ != nullptr, OP_LOGE(ACLNN_ERR_INNER, "tiling data malloc failed. [%zu]", tilingDataSize), return);
+    tilingData_->capacity_ = MAX_TILING_DATA_SIZE;
+    tilingData_->data_size_ = 0;
+
+    // reserve launch arg space for kernel args when launching.
+    tilingData_->data_ = PtrShift(tilingData_ + 1, LAUNCH_ARG_SIZE);
+    OP_LOGI("#### TilingData: %p, cap: %zu", tilingData_, MAX_TILING_DATA_SIZE);
+
+    workspaceSizeVec_ = gert::ContinuousVector::Create<size_t>(MAX_WORKSPACE_NUM);
+    if (workspaceSizeVec_ == nullptr) {
+        OP_LOGE(ACLNN_ERR_RUNTIME_ERROR, "Create ContinuousVector failed. size[%zu]", MAX_WORKSPACE_NUM);
+        return;
+    }
+
+    tilingCtxValue_[kOutputTilingData].data.pointer = tilingData_;
+    tilingCtxValue_[kOutputWorkspace].data.pointer = workspaceSizeVec_.get();
+
+    // tiling_ctx_outputs_[kOutputTilingKey].data.pointer = &tiling_outputs_->tiling_key_;
+    tilingOutput_.tilingKey_ = PtrCastTo<uint64_t>(tilingCtxValue_[kOutputTilingKey].data.inplace);
+    tilingOutput_.blockDim_ = PtrCastTo<int64_t>(tilingCtxValue_[kOutputBlockDim].data.inplace);
+    tilingOutput_.atomicCleanFlag_ = PtrCastTo<bool>(tilingCtxValue_[kOutputAtomicCleanFlag].data.inplace);
+    tilingOutput_.tilingData_ = tilingData_;
+    tilingOutput_.workspaceSize_ = PtrCastTo<gert::TypedContinuousVector<size_t>>(workspaceSizeVec_.get());
+    tilingOutput_.tilingCond_ = PtrCastTo<int64_t>(tilingCtxValue_[kOutputTilingCond].data.inplace);
+    tilingOutput_.scheduleMode_ = PtrCastTo<uint8_t>(tilingCtxValue_[kOutputScheduleMode].data.inplace);
+    tilingOutput_.localMemorySize_ = PtrCastTo<uint32_t>(tilingCtxValue_[kOutputLocalMemorySize].data.inplace);
+}
+
+aclnnStatus TilingCtxHolder::UpdateTilingCtx(const KernelContextHolder *kernelCtx,
+                                             const TilingParseCtxHolder *tilingParseCtx)
+{
+    CHECK_COND(kernelCtx != nullptr, ACLNN_ERR_RUNTIME_ERROR, "kernelCtx is NULL");
+    CHECK_COND(tilingParseCtx != nullptr, ACLNN_ERR_RUNTIME_ERROR, "tilingParseCtx is NULL");
+    // Reset tiling data.
+    tilingData_->data_size_ = 0;
+    *tilingOutput_.atomicCleanFlag_ = false;
+    *tilingOutput_.blockDim_ = 0;
+    *tilingOutput_.tilingKey_ = 0;
+    *tilingOutput_.scheduleMode_ = 0;
+    *tilingOutput_.localMemorySize_ = 0;
+    PtrCastTo<gert::ContinuousVector>(workspaceSizeVec_.get())->SetSize(0);
+
+    tilingCtx_->compute_node_info = kernelCtx->computeNodeInfo_;
+    tilingCtx_->kernel_extend_info = &kernelCtx->kernelExtendInfo_;
+
+    size_t opInputNum = kernelCtx->inputNum_;
+    size_t opOutputNum = kernelCtx->outputNum_;
+    // + 4 for tiling compile info parsed struct,platform,tilingfunc,deterministic
+    size_t tilingInputNum = opInputNum + opOutputNum + TILING_INPUT_OTHER_NUM;
+    tilingOutput_.inputNum_ = opInputNum;
+    tilingOutput_.outputNum_ = opOutputNum;
+
+    tilingCtx_->input_size = tilingInputNum;
+    for (size_t i = 0; i < tilingInputNum - TILING_INPUT_OTHER_NUM; i++) {
+        tilingCtx_->values[i] = &kernelCtx->opInArg_[i];
+    }
+    uint32_t coreNum = tilingParseCtx->GetCoreNum();
+    uint32_t cubeCoreNum = GetThreadLocalContext().opConfigInfo_.aicNum_;
+    uint32_t vectorCoreNum = GetThreadLocalContext().opConfigInfo_.aivNum_;
+    fe::PlatFormInfos *platformInfo = SocContext::GetPlatformInfo();
+    UpdateThradLocalPlatformInfo(platformInfo, coreNum, cubeCoreNum, vectorCoreNum);
+    platformInfoValue_.data.pointer = platformInfo;
+
+    tilingCtx_->values[tilingInputNum - TILING_INPUT_OTHER_NUM] = tilingParseCtx->GetCompiledInfoStruct();
+    tilingCtx_->values[tilingInputNum - TILING_PLATFORM_IDX] = &platformInfoValue_;
+    tilingCtx_->values[tilingInputNum - TILING_FUNC_IDX] = nullptr;
+    tilingCtx_->values[tilingInputNum - 1] = tilingParseCtx->GetDeterministic();
+    for (size_t i = 0; i < tilingOutputNum_; i++) {
+        tilingCtx_->values[tilingInputNum + i] = &tilingCtxValue_[i];
+    }
+    tilingCtx_->output_start = tilingCtx_->values + tilingCtx_->input_size;
+
+    OP_LOGI("Update op tiling ctx. input[%zu], output[%zu], compiled Info %p, deterministic %d, tilingDataWrap: %p, "
+            "coreNum: %u",
+            opInputNum, opOutputNum, tilingParseCtx->GetCompiledInfoStruct(),
+            *reinterpret_cast<int32_t *>(tilingCtx_->values[tilingInputNum - 1]->data.inplace),
+            tilingData_, coreNum);
+    return ACLNN_SUCCESS;
+}
+
+aclnnStatus TilingCtxHolder::UpdateTilingCtx(const KernelContextHolder *kernelCtx)
+{
+    CHECK_COND(kernelCtx != nullptr, ACLNN_ERR_RUNTIME_ERROR, "kernelCtx is NULL");
+    // Reset tiling data.
+    tilingData_->data_size_ = 0;
+    *tilingOutput_.atomicCleanFlag_ = false;
+    *tilingOutput_.blockDim_ = 0;
+    *tilingOutput_.tilingKey_ = 0;
+    *tilingOutput_.scheduleMode_ = 0;
+    *tilingOutput_.localMemorySize_ = 0;
+    PtrCastTo<gert::ContinuousVector>(workspaceSizeVec_.get())->SetSize(0);
+
+    tilingCtx_->compute_node_info = kernelCtx->computeNodeInfo_;
+    tilingCtx_->kernel_extend_info = &kernelCtx->kernelExtendInfo_;
+
+    size_t opInputNum = kernelCtx->inputNum_;
+    size_t opOutputNum = kernelCtx->outputNum_;
+    // + 4 for tiling compile info parsed struct,platform,tilingfunc,deterministic
+    size_t tilingInputNum = opInputNum + opOutputNum + TILING_INPUT_OTHER_NUM;
+    tilingOutput_.inputNum_ = opInputNum;
+    tilingOutput_.outputNum_ = opOutputNum;
+
+    tilingCtx_->input_size = tilingInputNum;
+    for (size_t i = 0; i < tilingInputNum - TILING_INPUT_OTHER_NUM; i++) {
+        tilingCtx_->values[i] = &kernelCtx->opInArg_[i];
+    }
+
+    tilingCtx_->values[tilingInputNum - TILING_INPUT_OTHER_NUM] = nullptr;
+    tilingCtx_->values[tilingInputNum - TILING_PLATFORM_IDX] = nullptr;
+    tilingCtx_->values[tilingInputNum - TILING_FUNC_IDX] = nullptr;
+    tilingCtx_->values[tilingInputNum - 1] = nullptr;
+    for (size_t i = 0; i < tilingOutputNum_; i++) {
+        tilingCtx_->values[tilingInputNum + i] = &tilingCtxValue_[i];
+    }
+    tilingCtx_->output_start = tilingCtx_->values + tilingCtx_->input_size;
+    return ACLNN_SUCCESS;
+}
+
+TilingCtxHolder::~TilingCtxHolder()
+{
+    FREE(tilingCtx_);
+    FREE(tilingCtxValue_);
+    FREE(tilingData_);
+}
+
+} // namespace internal
+} // namespace op

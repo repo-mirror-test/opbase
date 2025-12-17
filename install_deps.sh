@@ -4,8 +4,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ============================================================================
 
 set -euo pipefail
@@ -55,7 +56,7 @@ detect_os() {
                 PKG_MANAGER="yum"
             fi
         else
-            echo "自动安装脚本不支持该Linux发行版本，请手动安装依赖"
+            echo "不支持的Linux发行版本"
             exit 1
         fi
     elif [[ "$(uname -s)" == "Darwin" ]]; then
@@ -199,30 +200,30 @@ install_cmake() {
         fi
     fi
 
-    echo "安装CMake、Make..."
+    echo "安装CMake..."
     case "$OS" in
         debian)
             if grep -q "Ubuntu 18.04" /etc/os-release; then
                 run_command wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /usr/share/keyrings/kitware-archive-keyring.gpg >/dev/null
                 run_command echo 'deb [signed-by=/usr/share/keyrings/kitware-archive-keyring.gpg] https://apt.kitware.com/ubuntu/ bionic main' | sudo tee /etc/apt/sources.list.d/kitware.list >/dev/null
                 run_command sudo apt update
-                run_command sudo apt install -y cmake make
+                run_command sudo apt install -y cmake
             else
                 run_command sudo $PKG_MANAGER update
-                run_command sudo $PKG_MANAGER install -y cmake make
+                run_command sudo $PKG_MANAGER install -y cmake
             fi
             ;;
         rhel)
             if grep -q "release 7" /etc/redhat-release; then
                 run_command sudo $PKG_MANAGER install -y epel-release
-                run_command sudo $PKG_MANAGER install -y cmake3 make
+                run_command sudo $PKG_MANAGER install -y cmake3
                 run_command sudo ln -s /usr/bin/cmake3 /usr/bin/cmake
             else
-                run_command sudo $PKG_MANAGER install -y cmake make
+                run_command sudo $PKG_MANAGER install -y cmake
             fi
             ;;
         macos)
-            run_command brew install cmake make
+            run_command brew install cmake
             ;;
     esac
 
@@ -281,7 +282,7 @@ install_pigz() {
 }
 
 install_patch() {
-    # patch版本号>=2.7
+    # patch版本号>=2.7 :cite[3]
     echo -e "\n==== 检查patch ===="
     local req_ver="2.7.0"
     local curr_ver=""

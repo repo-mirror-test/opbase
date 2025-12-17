@@ -6,8 +6,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 """filelist相关类。"""
@@ -485,7 +486,7 @@ transform_nested_path_in_filelist = pipe(
 )
 
 
-def generate_filelist(filelist: FileList, filename: str):
+def generate_filelist(filelist: FileList, filename: str, build_dir: str):
     """生成文件列表文件。"""
     content_list = list(
         itertools.chain(
@@ -494,7 +495,7 @@ def generate_filelist(filelist: FileList, filename: str):
         )
     )
     content = '\n'.join(content_list)
-    filepath = os.path.join(TOP_DIR, "build", filename)
+    filepath = os.path.join(build_dir, filename)
     try:
         with open(filepath, 'w', encoding='utf-8') as file:
             file.write(content)

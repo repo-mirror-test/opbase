@@ -5,8 +5,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 req_ver_path=$1
@@ -90,11 +91,11 @@ check_version_file () {
 check_opp_version_file () {
     if [ -f "${_CURR_PATH}/../../version.info" ];then
         ver_info="${_CURR_PATH}/../../version.info"
-    # ops_base/version.info -> ops_base
-    elif [ -f "${_DEFAULT_INSTALL_PATH}/ops_base/version.info" ];then
-        ver_info="${_DEFAULT_INSTALL_PATH}/ops_base/version.info"
+    # opbase/version.info -> opbase
+    elif [ -f "${_DEFAULT_INSTALL_PATH}/opbase/version.info" ];then
+        ver_info="${_DEFAULT_INSTALL_PATH}/opbase/version.info"
     else
-        logandprint "[ERROR]: ERR_NO:${FILE_NOT_EXIST}; The [ops_base] version.info not exists."
+        logandprint "[ERROR]: ERR_NO:${FILE_NOT_EXIST}; The [opbase] version.info not exists."
     fi
     return
 }
@@ -119,10 +120,10 @@ show_relation () {
     req_pkg_name_val="$2"
     req_pkg_path="$3"
     if [ "$relation_situation" = "SUCC" ] ;then
-        logandprint "[INFO]: Relationship of ops_base with ${req_pkg_name_val} in path ${req_pkg_path} check successfully"
+        logandprint "[INFO]: Relationship of opbase with ${req_pkg_name_val} in path ${req_pkg_path} check successfully"
         return 0
     else
-        logandprint "[WARNING]: Relationship of ops_base with ${req_pkg_name_val} in path ${req_pkg_path} check failed. \
+        logandprint "[WARNING]: Relationship of opbase with ${req_pkg_name_val} in path ${req_pkg_path} check failed. \
 do you want to continue.  [y/n] "
         while true
         do
@@ -141,7 +142,7 @@ do you want to continue.  [y/n] "
 
 version_check () {
     path_val="$1"
-#get ops_base version
+#get opbase version
     check_opp_version_file
     ret_check_opp_version_file=$ver_info
 #get checked path

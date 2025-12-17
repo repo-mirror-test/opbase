@@ -5,8 +5,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 PARAM_INVALID="0x0002"
@@ -84,7 +85,7 @@ checkinstalledtype() {
     [ "${_type}" != "full" ] &&
     [ "${_type}" != "devel" ]; then
         logandprint "[ERROR]: ERR_NO:${UNAME_NOT_EXIST};ERR_DES:Install type \
-[${_ugroup}] of ops_base module is not right!"
+[${_ugroup}] of opbase module is not right!"
         return 1
     else
         return 0
@@ -108,11 +109,11 @@ unsetenv() {
         uninstall_option=""
     fi
     checkfileexist "${_ABS_INSTALL_PATH}/${ops_base_platform_dir}/bin/setenv.bash"
-    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
     checkfileexist "${_ABS_INSTALL_PATH}/${ops_base_platform_dir}/bin/setenv.csh"
-    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
     checkfileexist "${_ABS_INSTALL_PATH}/${ops_base_platform_dir}/bin/setenv.fish"
-    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
 }
 
 installed_path="$1"
@@ -138,7 +139,7 @@ fi
 SCENE_FILE="${_CURR_PATH}""/../scene.info"
 platform_data=$(grep -e "arch" "$SCENE_FILE" | cut --only-delimited -d"=" -f2-)
 ops_base_platform_old_dir=ops_base_$platform_data-linux
-ops_base_platform_dir=ops_base
+ops_base_platform_dir=opbase
 upper_opp_platform=$(echo "${ops_base_platform_dir}" | tr 'a-z' 'A-Z')
 _FILELIST_FILE="${_CURR_PATH}""/filelist.csv"
 _COMMON_PARSER_FILE="${_CURR_PATH}""/install_common_parser.sh"
@@ -155,7 +156,7 @@ _INSTALL_INFO_FILE="${_ABS_INSTALL_PATH}/${_INSTALL_INFO_SUFFIX}"
 if [ ! -f "${_INSTALL_INFO_FILE}" ]; then
     _INSTALL_INFO_FILE="/etc/ascend_install.info"
 fi
-# this is ops_base verion info file
+# this is opbase verion info file
 _VERSION_INFO_FILE="${_ABS_INSTALL_PATH}/${_VERSION_INFO_SUFFIX}"
 
 # keys of infos in ascend_install.info
@@ -198,26 +199,26 @@ getinstalledinfo() {
     echo "${res}"
 }
 
-logandprint "[INFO]: Begin uninstall the ops_base module."
+logandprint "[INFO]: Begin uninstall the opbase module."
 
 # check install folder existed
 checkfileexist "${_INSTALL_INFO_FILE}"
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
 checkfileexist "${_FILELIST_FILE}"
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
 checkfileexist "${_COMMON_PARSER_FILE}"
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
 ops_base_sub_dir="${_ABS_INSTALL_PATH}""/${ops_base_platform_dir}"
 checkdirectoryexist "${ops_base_sub_dir}"
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
 
 installed_type=$(getinstalledinfo "${KEY_INSTALLED_TYPE}")
 checkinstalledtype "${installed_type}"
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
 
 _CUSTOM_PERM="755"
 _BUILTIN_PERM="555"
-# make the ops_base and the upper folder can write files
+# make the opbase and the upper folder can write files
 is_change_dir_mode="false"
 if [ "$(id -u)" != 0 ] && [ ! -w "${_TARGET_INSTALL_PATH}" ]; then
     chmod u+w "${_TARGET_INSTALL_PATH}" 2> /dev/null
@@ -236,7 +237,7 @@ chmod "${_CUSTOM_PERM}" "${_TARGET_INSTALL_PATH}/${ops_base_platform_dir}" 2> /d
 get_version "pkg_version" "$_VERSION_INFO_FILE"
 get_version_dir "pkg_version_dir" "$_VERSION_INFO_FILE"
 
-# delete ops_base source files
+# delete opbase source files
 unsetenv
 
 is_multi_version_pkg "pkg_is_multi_version" "$_VERSION_INFO_FILE "
@@ -247,7 +248,7 @@ fi
 if [ "${pkg_version_dir}" = "" ]; then
     FINAL_INSTALL_PATH=${_ABS_INSTALL_PATH}
 else
-    TMP_PATH="${_ABS_INSTALL_PATH}/../"
+    TMP_PATH="${_ABS_INSTALL_PATH}/../../../"
     FINAL_INSTALL_PATH=$(cd ${TMP_PATH}; pwd)
 fi
 
@@ -255,15 +256,15 @@ fi
 chmod +w -R "${_COMMON_PARSER_FILE}"
 
 sh "${_COMMON_PARSER_FILE}" --package="${ops_base_platform_dir}" --uninstall --recreate-softlink --username="${target_username}" --usergroup="${target_usergroup}" --version=$pkg_version \
-    --version-dir=$pkg_version_dir ${uninstall_option} "${installed_type}" "${FINAL_INSTALL_PATH}" "${_FILELIST_FILE}" "${_CHIP_TYPE}" --recreate-softlink
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall ops_base module failed."
+    --use-share-info --remove-install-info --version-dir=$pkg_version_dir ${uninstall_option} "${installed_type}" "${FINAL_INSTALL_PATH}" "${_FILELIST_FILE}" "${_CHIP_TYPE}" --recreate-softlink
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
 
 
 # delete install.info file
 if [ "${uninstall_mode}" != "upgrade" ]; then
     logandprint "[INFO]: Delete the install info file (${_INSTALL_INFO_FILE})."
     rm -f "${_INSTALL_INFO_FILE}"
-    logwitherrorlevel "$?" "warn" "[WARNING]Delete ops_base install info file failed, \
+    logwitherrorlevel "$?" "warn" "[WARNING]Delete opbase install info file failed, \
 please delete it by yourself."
 fi
 
@@ -284,7 +285,7 @@ deleteopp(){
     fi
 }
 
-# delete the empty ops_base folder it'self
+# delete the empty opbase folder it'self
 res_val=$(ls "${ops_base_sub_dir}" 2> /dev/null)
 if [ "${res_val}" = "" ]; then
     rm -rf -d "${ops_base_sub_dir}" >> /dev/null 2>&1
@@ -318,36 +319,11 @@ if [ -f ${scene_dir} ]; then
     rm -f ${scene_dir}
 fi
 
-# remote atvoss relete softlink
-atvoss_dst_dir=${FINAL_INSTALL_PATH}/latest/opp/built-in/op_impl/ai_core/tbe/impl/ascendc/common
-chmod u+w "${atvoss_dst_dir}" 2> /dev/null
-atvoss_soft_link="${atvoss_dst_dir}""/atvoss"
-if [ -L "${atvoss_soft_link}" ];then
-    logandprint "[INFO]: Delete the atvoss soft link ("${atvoss_soft_link}")."
-    rm -rf "${atvoss_soft_link}"
-    logwitherrorlevel "$?" "warn" "[WARNING]Delete atvoss soft link failed, that may cause \
-some error to atvoss."
-fi
-chmod u-w "${atvoss_dst_dir}" 2> /dev/null
-atvoss_op_kernel_dst_dir=${FINAL_INSTALL_PATH}/latest/opp/built-in/op_impl/ai_core/tbe/impl/ascendc/common/op_kernel
-chmod u+w "${atvoss_op_kernel_dst_dir}" 2> /dev/null
-op_kernel_files="math_util.h platform_util.h"
-for file_name in $op_kernel_files;
-do
-    op_kernel_soft_link="${atvoss_op_kernel_dst_dir}""/${file_name}"
-    if [ -L "${op_kernel_soft_link}" ];then
-        logandprint "[INFO]: Delete the op_kernel soft link (${op_kernel_soft_link})."
-        rm -rf "${op_kernel_soft_link}"
-        logwitherrorlevel "$?" "warn" "[WARNING]Delete op_kernel atvoss soft link failed, that may cause \
-    some error to atvoss."
-    fi
-done
-chmod u-w "${atvoss_op_kernel_dst_dir}" 2> /dev/null
-
 # delete the upper folder when it is empty
 dir_existed=$(ls "${_ABS_INSTALL_PATH}" 2> /dev/null)
 if [ "${dir_existed}" = "" ] && [ "${uninstall_mode}" != "upgrade" ]; then
-    rm -rf -d "${_ABS_INSTALL_PATH}" >> /dev/null 2>&1
+    # rm -rf -d "${_ABS_INSTALL_PATH}" >> /dev/null 2>&1
+    rmdir -p "${_ABS_INSTALL_PATH}" >> /dev/null 2>&1
 fi
 
 subdirs_param_install=$(ls "${installed_path}" 2> /dev/null)

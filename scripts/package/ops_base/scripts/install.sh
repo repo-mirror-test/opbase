@@ -5,8 +5,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 _CURR_OPERATE_USER="$(id -nu 2> /dev/null)"
@@ -27,7 +28,7 @@ _FILELIST_FILE="${_CURR_PATH}""/filelist.csv"
 _INSTALL_SHELL_FILE="${_CURR_PATH}""/opp_install.sh"
 _UPGRADE_SHELL_FILE="${_CURR_PATH}""/opp_upgrade.sh"
 _RUN_PKG_INFO_FILE="${_CURR_PATH}""/../scene.info"
-_VERSION_INFO_FILE="${_CURR_PATH}""/../../version.info"
+_VERSION_INFO_FILE="${_CURR_PATH}""/../version.info"
 _COMMON_INC_FILE="${_CURR_PATH}""/common_func.inc"
 _VERCHECK_FILE="${_CURR_PATH}""/ver_check.sh"
 _PRE_CHECK_FILE="${_CURR_PATH}""/../bin/prereq_check.bash"
@@ -42,10 +43,10 @@ _OPP_COMMON_FILE="${_CURR_PATH}/opp_common.sh"
 . "${_OPP_COMMON_FILE}"
 platform_data=$(grep -e "arch" "$_RUN_PKG_INFO_FILE" | cut --only-delimited -d"=" -f2-)
 opp_old_platform_dir=ops_base_$platform_data-linux
-opp_platform_dir=ops_base
+opp_platform_dir=opbase
 upper_opp_platform=$(echo "${opp_platform_dir}" | tr 'a-z' 'A-Z')
 # defaluts info determinated by user's inputs
-_INSTALL_LOG_DIR="ops_base/install_log"
+_INSTALL_LOG_DIR="opbase/install_log"
 _INSTALL_INFO_SUFFIX="${opp_platform_dir}/ascend_install.info"
 _VERSION_INFO_SUFFIX="${opp_platform_dir}/version.info"
 _TARGET_INSTALL_PATH=""
@@ -134,7 +135,7 @@ checkemtpyuser() {
     _ugroup_value="$3"
     if [ "${_uname_value}" != "" ] || [ "${_ugroup_value}" != "" ]; then
         logandprint "[ERROR]: ERR_NO:${PARAM_INVALID};ERR_DES:Operation of \
-${_cmd_type} ops_base not support specific user name or user group. Please \
+${_cmd_type} opbase not support specific user name or user group. Please \
 use [--help] to see the useage."notepadd
         return 1
     fi
@@ -289,7 +290,7 @@ precleanbeforeinstall() {
     fi
     _installed_path=$(getinstalledinfo "${KEY_INSTALLED_PATH}")
     _files_existed=1
-    # check the installation folder has files or ops_base module existed or not
+    # check the installation folder has files or opbase module existed or not
     _existed_files=$(find ${_opp_sub_dir} -path ${_opp_sub_dir}/aicpu -prune -o -type f -print 2> /dev/null)
     _arrs="aicpu Ascend310 Ascend910 Ascend310P Ascend"
 
@@ -317,8 +318,8 @@ precleanbeforeinstall() {
    
     if [ "${_files_existed}" = "0" ]; then
         if [ "${is_quiet}" = y ]; then
-            logandprint "[WARNING]: Directory has file existed or installed ops_base \
-module, are you sure to keep installing ops_base module in it? y"
+            logandprint "[WARNING]: Directory has file existed or installed opbase \
+module, are you sure to keep installing opbase module in it? y"
         else
             if [ ! -f  "${_opp_sub_dir}""/ascend_install.info" ]; then
                 logandprint "[INFO]: Directory has file existed, do you want to continue? [y/n]"
@@ -331,7 +332,7 @@ and the version of this package is $(getrunpkginfo "${KEY_RUNPKG_VERSION}"), do 
             do
                 read yn
                 if [ "$yn" = n ]; then
-                    logandprint "[INFO]: Exit to install ops_base module."
+                    logandprint "[INFO]: Exit to install opbase module."
                     exitlog
                     exit 0
                 elif [ "$yn" = y ]; then
@@ -342,7 +343,7 @@ and the version of this package is $(getrunpkginfo "${KEY_RUNPKG_VERSION}"), do 
             done
         fi
     else
-        logandprint "[INFO]: Directory is empty, directly install ops_base module."
+        logandprint "[INFO]: Directory is empty, directly install opbase module."
     fi
 
     ret=0
@@ -374,11 +375,11 @@ Please install without quiet mode and check permission."
     fi
 
     if [ "${_files_existed}" = "0" ] && [ "${_installed_path}" = "${_path}" ]; then
-        logandprint "[INFO]: Clean the installed ops_base module before install."
+        logandprint "[INFO]: Clean the installed opbase module before install."
         if [ ! -f "${_UNINSTALL_SHELL_FILE}" ]; then
             logandprint "[ERROR]: ERR_NO:${FILE_NOT_EXIST};ERR_DES:The file\
 (${_UNINSTALL_SHELL_FILE}) not exists. Please set the correct install \
-path or clean the previous version ops_base install info (/etc/ascend_install.info) and then reinstall it."
+path or clean the previous version opbase install info (/etc/ascend_install.info) and then reinstall it."
             return 1
         fi
 #        aicpuinfofile "remove"
@@ -699,9 +700,9 @@ show_relation () {
     req_pkg_name_val="$2"
     req_pkg_path="$3"
     if [ "$relation_situation" = "SUCC" ] ;then
-        logandprint "[INFO]: Relationship of ops_base with ${req_pkg_name_val} in path ${req_pkg_path} checked successfully"
+        logandprint "[INFO]: Relationship of opbase with ${req_pkg_name_val} in path ${req_pkg_path} checked successfully"
     else
-        logandprint "[WARNING]: Relationship of ops_base with ${req_pkg_name_val} in path ${req_pkg_path} checked failed."
+        logandprint "[WARNING]: Relationship of opbase with ${req_pkg_name_val} in path ${req_pkg_path} checked failed."
     fi
     return
 }
@@ -787,7 +788,7 @@ judgment_path() {
     . "${_COMMON_INC_FILE}"
     check_install_path_valid "${1}"
     if [ $? -ne 0 ]; then
-        echo "[OpsBase][ERROR]: The ops_base install path ${1} is invalid, only characters in [a-z,A-Z,0-9,-,_] are supported!"
+        echo "[OpsBase][ERROR]: The opbase install path ${1} is invalid, only characters in [a-z,A-Z,0-9,-,_] are supported!"
         exitlog
         exit 1
     fi
@@ -854,14 +855,14 @@ interact_pre_check() {
     exec_pre_check
     if [ "$?" != 0 ]; then
         if [ "${is_quiet}" = y ]; then
-            logandprint "[WARNING]: Precheck of ops_base module execute failed! do you want to continue install? y"
+            logandprint "[WARNING]: Precheck of opbase module execute failed! do you want to continue install? y"
         else
-            logandprint "[WARNING]: Precheck of ops_base module execute failed! do you want to continue install?  [y/n] "
+            logandprint "[WARNING]: Precheck of opbase module execute failed! do you want to continue install?  [y/n] "
             while true
             do
             read yn
             if [ "$yn" = "n" ]; then
-                echo "stop install ops_base module!"
+                echo "stop install opbase module!"
                 exit 1
             elif [ "$yn" = y ]; then
                 break;
@@ -1032,7 +1033,7 @@ check_dir_permission_for_common_user() {
                 do
                     read yn
                     if [ "$yn" = n ]; then
-                        logandprint "[INFO]: stop install ops_base module!"
+                        logandprint "[INFO]: stop install opbase module!"
                         exitlog
                         exit 1
                     elif [ "$yn" = y ]; then
@@ -1112,20 +1113,7 @@ while true
 do
     # skip 2 parameters avoid run pkg and directory as input parameter
     case "$1" in
-    --version)
-        if [ -e "${_VERSION_INFO_FILE}" ]; then
-            . "${_VERSION_INFO_FILE}"
-            echo ${Version}
-            exitlog
-            exit 0
-        else
-            echo "[ERROR]: ERR_NO:${FILE_NOT_EXIST};ERR_DES:The version file \
-(${_VERSION_INFO_FILE}) not exists or without execute permission."
-            exitlog
-            exit 1
-        fi
-        ;;
-    --run | --full | --devel)
+    --full)
         in_install_type=$(echo ${1} | awk -F"--" '{print $2}')
         is_install=y
         iter_i=$(( ${iter_i} + 1 ))
@@ -1149,67 +1137,12 @@ do
         check_install_path "${in_install_path}" "--install-path"
         shift
         ;;
-    --chip=*)
-        tmp_chip_type=$(echo $1 | cut -d"=" -f2 )
-        if test -z "$tmp_chip_type"; then
-            echo "[OpsBase] [ERROR]: ERR_NO:${PARAM_INVALID};ERR_DES:Paramter --chip cannot be null."
-            exitlog
-            exit 1
-        fi
-        if [ "${is_uninstall}" = "y" ]; then
-            echo "[OpsBase] [ERROR]: ERR_NO:${PARAM_INVALID};ERR_DES:Paramter --chip is not supported to used by this way. please use with \
-'--full', '--devel', '--run', '--upgrade'."
-            exitlog
-            exit 1
-        fi
-        is_chip=y
-        shift
-        ;;
-    --feature=*)
-        feature_choice=$(echo $1 | cut -d"=" -f2 )
-        if test -z "$feature_choice"; then
-            echo "[OpsBase] [ERROR]: ERR_NO:${PARAM_INVALID};ERR_DES:Paramter --feature cannot be null."
-            exitlog
-            exit 1
-        fi
-        contain_feature "ret" "$feature_choice" "${_FILELIST_FILE}"
-        if [ "$ret" = "false" ]; then
-            log "WARNING" "OpsBase package doesn't contain features $feature_choice, skip installation."
-            exit 0
-        fi
-        is_feature=y
-        shift
-        ;;
     --quiet)
         is_quiet=y
         shift
         ;;
     --install-for-all)
         is_for_all=y
-        shift
-        ;;
-    --check)
-        is_check=y
-        iter_i=$(( ${iter_i} + 1 ))
-        shift
-        ;;
-    --check-path=*)
-        check_path=$1
-        iter_i=$(( ${iter_i} + 1 ))
-        shift
-        ;;
-    --pre-check)
-        is_precheck=y
-        shift
-        ;;
-    --setenv)
-        is_setenv=y
-        shift
-        ;;
-    --docker-root=*)
-        is_docker_install=y
-	docker_root=$(echo $1 | cut -d"=" -f2 )
-        check_docker_path ${docker_root}
         shift
         ;;
     -*)
@@ -1225,14 +1158,6 @@ operation execute failed. Please use [--help] to see the useage."
 done
 
 logandprint "[INFO]: Command install"
-architecture=$(uname -m)
-# check platform
-if [ "${architecture}" != "${platform_data}" ] ; then
-    logandprint "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:the architecture of the run package \
-is inconsistent with that of the current environment. "
-    exitlog
-    exit 1
-fi
 #root install set is_for_all y
 if [ "$(id -u)" = "0" ] ; then
     is_for_all=y
@@ -1261,7 +1186,7 @@ else
 fi
 
 if [ "$pkg_is_multi_version" = "true" ]; then
-    target_dir="${_TARGET_INSTALL_PATH}/$pkg_version_dir"
+    target_dir="${_TARGET_INSTALL_PATH}/$pkg_version_dir/share/info"
 else
     target_dir="${_TARGET_INSTALL_PATH}"
 fi
@@ -1280,9 +1205,9 @@ fi
 
 uninstall_none_multi_version "$_TARGET_INSTALL_PATH/${opp_platform_dir}"
 if [ "$?" = "0" ]; then
-    echo "[OpsBase] [$(getdate)] [INFO]: Uninstall the version before multi version of ops_base successfully!"
+    echo "[OpsBase] [$(getdate)] [INFO]: Uninstall the version before multi version of opbase successfully!"
 else
-    echo "[OpsBase] [$(getdate)] [ERROR]: Uninstall the version before multi version of ops_base failed!"
+    echo "[OpsBase] [$(getdate)] [ERROR]: Uninstall the version before multi version of opbase failed!"
     exit 1
 fi
 if [ "${is_input_path}" = y ]; then
@@ -1323,7 +1248,7 @@ if [ ! -f "${_OPERATE_LOG_FILE}" ]; then
 fi
 
 
-logandprint "[INFO]: Execute the ops_base run package."
+logandprint "[INFO]: Execute the opbase run package."
 logandprint "[INFO]: OperationLogFile path: ${_INSTALL_LOG_FILE}."
 logandprint "[INFO]: Input params: $in_cmd_list"
 
@@ -1344,7 +1269,7 @@ if [ "${is_check}"="y" ] && [ "${check_path}" != "" ]; then
     _VERCHECK_FILE="${_CURR_PATH}""/ver_check.sh"
     if [ ! -f "${_VERCHECK_FILE}" ]; then
         logandprint "[ERROR]: ERR_NO:${FILE_NOT_EXIST};ERR_DES:The file\
-(${_VERCHECK_FILE}) not exists. Please make sure that the ops_base module\
+(${_VERCHECK_FILE}) not exists. Please make sure that the opbase module\
  installed in (${_VERCHECK_FILE}) and then set the correct install path."
     fi
     sh "${_VERCHECK_FILE}" "${check_path}"
@@ -1359,11 +1284,11 @@ installed_user=$(getinstalledinfo "${KEY_INSTALLED_UNAME}")
 installed_group=$(getinstalledinfo "${KEY_INSTALLED_UGROUP}")
 installed_feature=$(getinstalledinfo "${KEY_INSTALLED_FEATURE}")
 if [ "${installed_version}" = "" ]; then
-    logandprint "[INFO]: Version of installing ops_base module is ${runpkg_version}."
+    logandprint "[INFO]: Version of installing opbase module is ${runpkg_version}."
 else
     if [ "${runpkg_version}" != "" ]; then
-        logandprint "[INFO]: Existed ops_base module version is ${installed_version}, \
-the new ops_base module version is ${runpkg_version}."
+        logandprint "[INFO]: Existed opbase module version is ${installed_version}, \
+the new opbase module version is ${runpkg_version}."
     fi
 fi
 
@@ -1474,7 +1399,7 @@ if [ "${is_check}" = "y" ]; then
     if [ -z "$pkg_version_dir" ]; then
         preinstall_check --install-path="${target_dir}" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
         if [ $? -ne 0 ]; then
-            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of ops_base package fail,please confirm the true version package."
+            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
             exit 1
 	fi
     fi
@@ -1519,7 +1444,7 @@ if [ "${is_install}" = "y" ];then
     if [ "${is_for_all}" = y ] && [ $(id -u) -ne 0 ]; then
         check_dir_permission_for_common_user "${target_dir}"
     fi
-    # precheck before install ops_base module
+    # precheck before install opbase module
     if [ "${is_precheck}" = "y" ];then
         interact_pre_check
     fi
@@ -1528,7 +1453,7 @@ if [ "${is_install}" = "y" ];then
     if [ "${in_install_type}" != "devel" ]; then
         checkusergrouprelationvalid "${_TARGET_USERNAME}" "${_TARGET_USERGROUP}"
         if [ "$?" != 0 ]; then
-            logandprint "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Installation of ops_base\
+            logandprint "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Installation of opbase\
  module execute failed!"
             logoperationretstatus "$(getoperationname)" "$(getoperationinstalltype)" "1" "${in_cmd_list}"
         fi
@@ -1550,7 +1475,7 @@ user group (${_DEFAULT_USERGROUP}) for devel mode? [y/n]"
                 do
                     read yn
                     if [ "$yn" = "n" ]; then
-                        logandprint "[INFO]: Exit to install ops_base module."
+                        logandprint "[INFO]: Exit to install opbase module."
                         logoperationretstatus "$(getoperationname)" "$(getoperationinstalltype)" "1" "${in_cmd_list}"
                     elif [ "$yn" = y ]; then
                         break;
@@ -1577,7 +1502,7 @@ user group (${_DEFAULT_USERGROUP}) for devel mode? [y/n]"
     fi
 
     _FIRST_NOT_EXIST_DIR=$(getfirstnotexistdir "${target_dir}/${opp_platform_dir}")
-    #getfirstnotexistdir "/usr/local/tmp/CANN-1.81/ops_base"
+    #getfirstnotexistdir "/usr/local/tmp/CANN-1.81/opbase"
     is_the_last_dir_opp=""
     if [ "${_FIRST_NOT_EXIST_DIR}" = "${target_dir}/${opp_platform_dir}" ]; then
         is_the_last_dir_opp=1
@@ -1616,17 +1541,17 @@ user group (${_DEFAULT_USERGROUP}) for devel mode? [y/n]"
             logoperationretstatus "upgrade" "${install_type}" "$?" "${in_cmd_list}"
         fi
     fi
-    # check the compatibility of ops_base
+    # check the compatibility of opbase
     if [ -z "$pkg_version_dir" ]; then
         preinstall_process --install-path="${target_dir}" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
         if [ $? -ne 0 ]; then
-            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of ops_base package fail,please confirm the true version package."
+            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
             exit 1
         fi
     fi
     # call opp_install.sh
-    if [ -d "${target_dir}/ops_base" ] && [ ! -L "${target_dir}/ops_base" ] && [ -f "${target_dir}/ops_base/script/uninstall.sh" ]; then
-        bash "${target_dir}/ops_base/script/uninstall.sh"
+    if [ -d "${target_dir}/opbase" ] && [ ! -L "${target_dir}/opbase" ] && [ -f "${target_dir}/opbase/script/uninstall.sh" ]; then
+        bash "${target_dir}/opbase/script/uninstall.sh"
     fi
     sh "${_INSTALL_SHELL_FILE}" "${_TARGET_INSTALL_PATH}" "${_DEFAULT_USERNAME}" "${_DEFAULT_USERGROUP}" "${in_feature}" "${in_install_type}" "${is_quiet}" "${_FIRST_NOT_EXIST_DIR}" "${is_the_last_dir_opp}" "${is_for_all}" "${is_setenv}" "${is_docker_install}" "${docker_root}" "${is_input_path}" "${in_feature_new}" "${chip_type_new}"
     if [ "$?" != 0 ]; then
@@ -1645,32 +1570,19 @@ user group (${_DEFAULT_USERGROUP}) for devel mode? [y/n]"
 fi
 
 if [ "${is_upgrade}" = "y" ];then
-    # if latest dir has no ops_base module exit first!
-    if [ "$pkg_is_multi_version" = "true" ]; then
-        get_package_upgrade_version_dir "upgrade_version_dir" "${_TARGET_INSTALL_PATH}" "${opp_platform_dir}"
-        get_package_upgrade_version_dir "upgrade_old_version_dir" "${_TARGET_INSTALL_PATH}" "${opp_old_platform_dir}"
-        if [ -z "${upgrade_version_dir}" ] && [ -z "${upgrade_old_version_dir}" ]; then
-            logandprint "[ERROR]: latest path has no ops_base module"
-            upgrade_path=$(ls "${_TARGET_INSTALL_PATH}" 2> /dev/null)
-            if [ "${upgrade_path}" = "" ]; then
-                rm -rf "${_TARGET_INSTALL_PATH}"
-            fi
-            exit 1
-        fi
-    fi
     if [ "${is_for_all}" = y ] && [ $(id -u) -ne 0 ]; then
         check_dir_permission_for_common_user "${target_dir}"
     fi
     install_type=$(getinstalledinfo "${KEY_INSTALLED_TYPE}")
-    # precheck before upgrade ops_base module
+    # precheck before upgrade opbase module
     if [ "${is_precheck}" = "y" ];then
         interact_pre_check
     fi
-    # check the compatibility of ops_base
+    # check the compatibility of opbase
     if [ -z "$pkg_version_dir" ]; then
         preinstall_process --install-path="${target_dir}" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
         if [ $? -ne 0 ]; then
-            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of ops_base package fail,please confirm the true version package."
+            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
             exit 1
         fi
     fi
@@ -1703,7 +1615,7 @@ if [ "${is_uninstall}" = "y" ];then
     aicpustatus=0
     if [ ! -f "${_UNINSTALL_SHELL_FILE}" ]; then
         logandprint "[ERROR]: ERR_NO:${FILE_NOT_EXIST};ERR_DES:The file\
-    (${_UNINSTALL_SHELL_FILE}) not exists. Please make sure that the ops_base module\
+    (${_UNINSTALL_SHELL_FILE}) not exists. Please make sure that the opbase module\
     installed in (${target_dir}) and then set the correct install path."
 	uninstall_path=$(ls "${_TARGET_INSTALL_PATH}" 2> /dev/null)
         if [ "${uninstall_path}" = "" ]; then

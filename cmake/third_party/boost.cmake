@@ -1,0 +1,28 @@
+# ----------------------------------------------------------------------------
+# This program is free software, you can redistribute it and/or modify it.
+# Copyright (c) 2025 Huawei Technologies Co., Ltd.
+# This file is a part of the CANN Open Software.
+# Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
+# Please refer to the License for details. You may not use this file except in compliance with the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
+# ----------------------------------------------------------------------------
+
+set(BOOST_NAME "boost")
+set(BOOST_PATH ${PROJECT_SOURCE_DIR}/third_party/boost)
+
+if(NOT EXISTS "${BOOST_PATH}/boost/config.hpp")
+    set(BOOST_URL "https://gitcode.com/cann-src-third-party/boost/releases/download/v1.87.0/boost_1_87_0.tar.gz")
+    message(STATUS "start to get boost, install path: ${BOOST_PATH}")
+    include(FetchContent)
+    FetchContent_Declare(
+        ${BOOST_NAME}
+        URL ${BOOST_URL}
+        DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/third_party/pkg/boost
+        SOURCE_DIR ${BOOST_PATH}
+        TLS_VERIFY OFF
+    )
+    FetchContent_MakeAvailable(${BOOST_NAME})
+    message(STATUS "get boost")
+endif()

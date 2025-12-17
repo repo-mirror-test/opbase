@@ -5,8 +5,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 _CURR_OPERATE_USER="$(id -nu 2> /dev/null)"
@@ -21,18 +22,18 @@ fi
 
 # run package's files info
 _CURR_PATH=$(dirname $(readlink -f $0))
-_VERSION_INFO_FILE="${_CURR_PATH}""/../../version.info"
+_VERSION_INFO_FILE="${_CURR_PATH}""/../version.info"
 _FILELIST_FILE="${_CURR_PATH}""/filelist.csv"
 _COMMON_PARSER_FILE="${_CURR_PATH}""/install_common_parser.sh"
 SCENE_FILE="${_CURR_PATH}""/../scene.info"
 platform_data=$(grep -e "arch" "$SCENE_FILE" | cut --only-delimited -d"=" -f2-)
 ops_base_platform_old_dir=ops_base_$platform_data-linux
-ops_base_platform_dir=ops_base
+ops_base_platform_dir=opbase
 upper_ops_base_platform=$(echo "${ops_base_platform_dir}" | tr 'a-z' 'A-Z')
 
 
-_INSTALL_INFO_SUFFIX="${ops_base_platform_dir}/ascend_install.info"
-_VERSION_INFO_SUFFIX="${ops_base_platform_dir}/version.info"
+_INSTALL_INFO_SUFFIX="share/info/${ops_base_platform_dir}/ascend_install.info"
+_VERSION_INFO_SUFFIX="share/info/${ops_base_platform_dir}/version.info"
 
 _COMMON_INC_FILE="${_CURR_PATH}/common_func.inc"
 COMMON_FUNC_V2_PATH="${_CURR_PATH}/common_func_v2.inc"
@@ -260,7 +261,7 @@ getinstallpath() {
 }
 
 setenv() {
-    logandprint "[INFO]: Set the environment path [ export ASCEND_OPS_BASE_PATH=${relative_path_val}/${ops_base_platform_dir} ]."
+    logandprint "[INFO]: Set the environment path [ export ASCEND_OPS_BASE_PATH=${relative_path_val}/share/info/${ops_base_platform_dir} ]."
     if [ "${is_docker_install}" = y ] ; then
          install_option="--docker-root=${docker_root}"
     else
@@ -344,7 +345,7 @@ else
     _INSTALL_INFO_PERM="644"
 fi
 
-logandprint "[INFO]: Begin install ops_base module."
+logandprint "[INFO]: Begin install opbase module."
 checkfileexist "${_FILELIST_FILE}"
 if [ "$?" != 0 ]; then
     exit 1
@@ -368,7 +369,7 @@ if [ "${is_for_all}" = y ]; then
     _ONLYREAD_PERM="444"
 fi
 if [ "${_FIRST_NOT_EXIST_DIR}" != "" ]; then
-    mkdir -p "${version_install_dir}/${ops_base_platform_dir}" 2> /dev/null
+    mkdir -p "${version_install_dir}/share/info/${ops_base_platform_dir}" 2> /dev/null
     chmod -R "${_CREATE_DIR_PERM}" "${_FIRST_NOT_EXIST_DIR}" 2> /dev/null
     chown -R "${_TARGET_USERNAME}":"${_TARGET_USERGROUP}" "${_FIRST_NOT_EXIST_DIR}" 2> /dev/null
     if [ "$(id -u)" = "0" ] && [ "${is_the_last_dir_opp}" = "0" ]; then
@@ -376,7 +377,7 @@ if [ "${_FIRST_NOT_EXIST_DIR}" != "" ]; then
         chown -R "root":"root" "${_FIRST_NOT_EXIST_DIR}" 2> /dev/null
     fi
 fi
-# make the ops_base and the upper folder can write files
+# make the opbase and the upper folder can write files
 is_change_dir_mode="false"
 if [ "$(id -u)" != 0 ] && [ ! -w "${version_install_dir}" ]; then
     chmod u+w "${version_install_dir}" 2> /dev/null
@@ -384,19 +385,19 @@ if [ "$(id -u)" != 0 ] && [ ! -w "${version_install_dir}" ]; then
 fi
 
 # change installed folder's permission except aicpu
-subdirs_info=$(ls "${version_install_dir}/${ops_base_platform_dir}" 2> /dev/null)
+subdirs_info=$(ls "${version_install_dir}/share/info/${ops_base_platform_dir}" 2> /dev/null)
 for dir in ${subdirs_info}; do
     if [ "${dir}" != "Ascend310" ] && [ "${dir}" != "Ascend310RC" ] && [ "${dir}" != "Ascend910" ] && [ "${dir}" != "Ascend310P" ] && [ "${dir}" != "Ascend" ]  &&  [ "${dir}" != "aicpu" ] && [ "${dir}" != "script" ]; then
-        chmod -R "${_CUSTOM_PERM}" "${version_install_dir}/${ops_base_platform_dir}/${dir}" 2> /dev/null
+        chmod -R "${_CUSTOM_PERM}" "${version_install_dir}/share/info/${ops_base_platform_dir}/${dir}" 2> /dev/null
     fi
 done
-chmod "${_CUSTOM_PERM}" "${version_install_dir}/${ops_base_platform_dir}" 2> /dev/null
+chmod "${_CUSTOM_PERM}" "${version_install_dir}/share/info/${ops_base_platform_dir}" 2> /dev/null
 
 logandprint "[INFO]: upgradePercentage:30%"
 
 setenv
 
-logandprint "[INFO]: Update the ops_base install info."
+logandprint "[INFO]: Update the opbase install info."
 
 if [ "${in_feature_new}" = "" ]; then
     in_feature_1="--feature=all"
@@ -411,42 +412,14 @@ else
 fi
 
 updateinstallinfos "${_TARGET_USERNAME}" "${_TARGET_USERGROUP}" "${install_type}" "${relative_path_val}" "${in_feature_new}" "${chip_type_new}"
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Update ops_base install info failed."
-sh "${_COMMON_PARSER_FILE}" --package="${ops_base_platform_dir}" --install --username="${_TARGET_USERNAME}" --usergroup="${_TARGET_USERGROUP}" --set-cann-uninstall \
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Update opbase install info failed."
+sh "${_COMMON_PARSER_FILE}" --package="${ops_base_platform_dir}" --install --username="${_TARGET_USERNAME}" --usergroup="${_TARGET_USERGROUP}" --set-cann-uninstall --use-share-info \
     --version=$pkg_version --version-dir=$pkg_version_dir $install_option ${in_install_for_all} ${in_feature_1} ${chip_type_1}  "${install_type}" "${_TARGET_INSTALL_PATH}" "${_FILELIST_FILE}"
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Install ops_base module files failed."
-
-# create atvoss softlink
-atvoss_ops_base_dir=${_TARGET_INSTALL_PATH}/latest/ops_base/pkg_inc/op_common
-atvoss_dst_dir=${_TARGET_INSTALL_PATH}/latest/opp/built-in/op_impl/ai_core/tbe/impl/ascendc/common
-if [ ! -d "${atvoss_dst_dir}" ];then
-    mkdir -p "${atvoss_dst_dir}"
-fi
-# require write permission
-chmod u+w "${atvoss_dst_dir}" 2> /dev/null
-logandprint "[INFO]: Creating ("${atvoss_dst_dir}""/atvoss") soft link from ("${atvoss_ops_base_dir}""/atvoss")."
-createsoftlink "${atvoss_ops_base_dir}""/atvoss" "${atvoss_dst_dir}""/atvoss"
-logwitherrorlevel "$?" "warn" "[WARNING]: Create soft link for "${atvoss_dst_dir}""/atvoss". That may cause some issues for atvoss."
-
-# create atvoss op_kernel softlink
-atvoss_op_kernel_src_dir=${_TARGET_INSTALL_PATH}/latest/ops_base/pkg_inc/op_common/op_kernel
-atvoss_op_kernel_dst_dir=${_TARGET_INSTALL_PATH}/latest/opp/built-in/op_impl/ai_core/tbe/impl/ascendc/common/op_kernel
-if [ ! -d "${atvoss_op_kernel_dst_dir}" ];then
-    mkdir -p "${atvoss_op_kernel_dst_dir}"
-fi
-chmod u+w "${atvoss_op_kernel_dst_dir}" 2> /dev/null
-op_kernel_files="math_util.h platform_util.h"
-for file_name in $op_kernel_files;
-do
-    logandprint "[INFO]: Creating ("${atvoss_op_kernel_dst_dir}""/${file_name}") soft link from ("${atvoss_op_kernel_src_dir}""/${file_name}")."
-    createsoftlink "${atvoss_op_kernel_src_dir}""/${file_name}" "${atvoss_op_kernel_dst_dir}""/${file_name}"
-    logwitherrorlevel "$?" "warn" "[WARNING]: Create soft link for "${atvoss_op_kernel_dst_dir}""/${file_name}". That may cause some issues for atvoss."
-done
-chmod -R "${_BUILTIN_PERM}" "${atvoss_dst_dir}" 2> /dev/null
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Install opbase module files failed."
 
 #chmod to support copy
-if [ -d "${version_install_dir}/${ops_base_platform_dir}/vendors" ] && [ "$(id -u)" != "0" ]; then
-    chmod -R "${_CUSTOM_PERM}" ${version_install_dir}/${ops_base_platform_dir}/vendors
+if [ -d "${version_install_dir}/share/info/${ops_base_platform_dir}/vendors" ] && [ "$(id -u)" != "0" ]; then
+    chmod -R "${_CUSTOM_PERM}" ${version_install_dir}/share/info/${ops_base_platform_dir}/vendors
 fi
 
 logandprint "[INFO]: upgradePercentage:50%"
@@ -457,35 +430,35 @@ chmod "${_LOG_FILE_PERM}" "${_INSTALL_LOG_FILE}" 2> /dev/null
 chmod "${_LOG_FILE_PERM}" "${_OPERATE_LOG_FILE}" 2> /dev/null
 
 if [ "$(id -u)" = "0" ]; then
-    chmod "755" "${version_install_dir}/${ops_base_platform_dir}" 2> /dev/null
+    chmod "755" "${version_install_dir}/share/info/${ops_base_platform_dir}" 2> /dev/null
 else
-    chmod "${_BUILTIN_PERM}" "${version_install_dir}/${ops_base_platform_dir}" 2> /dev/null
+    chmod "${_BUILTIN_PERM}" "${version_install_dir}/share/info/${ops_base_platform_dir}" 2> /dev/null
 fi
 
-chmod "${_ONLYREAD_PERM}" "${version_install_dir}""/${ops_base_platform_dir}/scene.info" 2> /dev/null
-chmod "${_ONLYREAD_PERM}" "${version_install_dir}""/${ops_base_platform_dir}/version.info" 2> /dev/null
-chmod 600 "${version_install_dir}""/${ops_base_platform_dir}/ascend_install.info" 2> /dev/null
+chmod "${_ONLYREAD_PERM}" "${version_install_dir}""/share/info/${ops_base_platform_dir}/scene.info" 2> /dev/null
+chmod "${_ONLYREAD_PERM}" "${version_install_dir}""/share/info/${ops_base_platform_dir}/version.info" 2> /dev/null
+chmod 600 "${version_install_dir}""/share/info/${ops_base_platform_dir}/ascend_install.info" 2> /dev/null
 
 if [ "${is_change_dir_mode}" = "true" ]; then
     chmod u-w "${version_install_dir}" 2> /dev/null
 fi
 
 # change installed folder's owner and group except aicpu
-subdirs=$(ls "${version_install_dir}/${ops_base_platform_dir}" 2> /dev/null)
-chown "${_TARGET_USERNAME}":"${_TARGET_USERGROUP}" "${version_install_dir}/${ops_base_platform_dir}" 2> /dev/null
-logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Change ops_base onwership failed.."
+subdirs=$(ls "${version_install_dir}/share/info/${ops_base_platform_dir}" 2> /dev/null)
+chown "${_TARGET_USERNAME}":"${_TARGET_USERGROUP}" "${version_install_dir}/share/info/${ops_base_platform_dir}" 2> /dev/null
+logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Change opbase onwership failed.."
 
 logandprint "[INFO]: upgradePercentage:100%"
 
 logandprint "[INFO]: Installation information listed below:"
-logandprint "[INFO]: Install path: (${version_install_dir}/${ops_base_platform_dir})"
+logandprint "[INFO]: Install path: (${version_install_dir}/share/info/${ops_base_platform_dir})"
 logandprint "[INFO]: Install log file path: (${_INSTALL_LOG_FILE})"
 logandprint "[INFO]: Operation log file path: (${_OPERATE_LOG_FILE})"
 
 if [ "${is_setenv}" != "y" ];then
-    logandprint "[INFO]: Using requirements: when ops_base module install finished or \
-before you run the ops_base module, execute the command \
-[ export ASCEND_OPS_BASE_PATH=${_TARGET_INSTALL_PATH}/latest/${ops_base_platform_dir} ] to set the environment path."
+    logandprint "[INFO]: Using requirements: when opbase module install finished or \
+before you run the opbase module, execute the command \
+[ export ASCEND_OPS_BASE_PATH=${_TARGET_INSTALL_PATH}/latest/share/info/${ops_base_platform_dir} ] to set the environment path."
 fi
 
 logandprint "[INFO]: Ops_base package installed successfully! The new version takes effect immediately."

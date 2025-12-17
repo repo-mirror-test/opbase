@@ -72,6 +72,75 @@ target_compile_options(aicpu_nodedef PRIVATE
   -DEigen=ascend_Eigen
 )
 
+set (aicpu_cust_src_files
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpu_proto/node_def.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpu_proto/node_def_impl.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpu_proto/tensor.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpu_proto/tensor_impl.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpu_proto/tensor_shape.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpu_proto/tensor_shape_impl.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpu_proto/attr_value.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cpu_proto/attr_value_impl.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/host_sharder.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/device_sharder.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/eigen_threadpool.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/device.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/context.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/cpu_kernel_register.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/cpu_kernel_utils.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/cpu_kernel_cache.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/async_event_util.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../common/async_cpu_kernel.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cust_op/cust_op_log.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/../cust_op/cust_dlog_record.cc
+    ${PROTO_SRCS}
+)
+
+add_library(aicpu_cust_log STATIC
+  ${aicpu_cust_src_files}
+)
+
+add_dependencies(aicpu_cust_log aicpu_proto_device)
+
+target_include_directories(aicpu_cust_log PRIVATE
+  ${local_context_inc_path}
+  ${aicpu_proto_include}
+)
+
+target_link_libraries(aicpu_cust_log PRIVATE
+  $<BUILD_INTERFACE:intf_pub_aicpu>
+  Eigen3::Eigen
+  ascend_protobuf_static
+  -Wl,-z,relro,-z,now
+  $<$<NOT:$<STREQUAL:${RESERVED_SYMBOL},true>>:-s>
+  -ldl
+  -shared
+)
+
+target_compile_definitions(aicpu_cust_log PRIVATE
+    _FORTIFY_SOURCE=2
+    google=ascend_private
+)
+
+target_compile_options(aicpu_cust_log PRIVATE
+    -O2
+    -std=c++17
+    -ftrapv
+    -fstack-protector-all
+    -Werror=sign-compare
+    -Werror=unused-function
+    -Werror=unused-variable
+    -Wno-address
+    -fvisibility-inlines-hidden
+    -fvisibility=hidden
+    -fPIC
+)
+
+install(TARGETS aicpu_cust_log OPTIONAL
+    EXPORT aicpu_cust_log-targets
+    LIBRARY DESTINATION ${INSTALL_SHARED_LIBRARY_DIR}
+)
+
 message(STATUS "PRODUCT_SIDE is ${PRODUCT_SIDE}")
 set(CMAKE_CXX_COMPILER ${TOOLCHAIN_DIR}/bin/aarch64-target-linux-gnu-g++)
 set(CMAKE_C_COMPILER ${TOOLCHAIN_DIR}/bin/aarch64-target-linux-gnu-gcc)

@@ -4,17 +4,18 @@
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+ * the software repository for the full text of the License.
  */
-#ifndef AICPU_CONTEXT_COMMON_LOG_H
-#define AICPU_CONTEXT_COMMON_LOG_H
+#ifndef AICPU_COMMON_CONTEXT_LOG_H
+#define AICPU_COMMON_CONTEXT_LOG_H
 
 #include <sys/syscall.h>
 #include <cstdint>
 #include <unistd.h>
 
-#include "toolchain/slog.h"
+#include "log_weak.h"
 
 namespace aicpu {
 inline int64_t GetTid()
@@ -40,53 +41,43 @@ const char KERNEL_MODULE[] = "AICPU";
 #else
 #define KERNEL_LOG_DEBUG(fmt, ...)                                                    \
   do {                                                                                \
-    if (CheckLogLevel(AICPU, DLOG_DEBUG) == 1) {                                      \
-      if (DlogRecord == nullptr) {                                                    \
-      } else {                                                                        \
-        DlogRecord(AICPU, DLOG_DEBUG, "[%s:%d][%s][tid:%ld]" fmt, __FILE__, __LINE__, \
-                   __func__, aicpu::GetTid(), ##__VA_ARGS__);                         \
-      }                                                                               \
+    if ((&CheckLogLevel != nullptr) && (&DlogRecord != nullptr)) {                    \
+      dlog_debug(AICPU, "[%s:%d][%s][tid:%ld]" fmt, __FILE__, __LINE__, __func__,     \
+                 aicpu::GetTid(), ##__VA_ARGS__);                                     \
     }                                                                                 \
   } while (0)
 
-#define KERNEL_LOG_INFO(fmt, ...)                                                    \
-  do {                                                                               \
-    if (CheckLogLevel(AICPU, DLOG_INFO) == 1) {                                      \
-      if (DlogRecord == nullptr) {                                                   \
-      } else {                                                                       \
-        DlogRecord(AICPU, DLOG_INFO, "[%s:%d][%s][tid:%ld]" fmt, __FILE__, __LINE__, \
-                   __func__, aicpu::GetTid(), ##__VA_ARGS__);                        \
-      }                                                                              \
-    }                                                                                \
+#define KERNEL_LOG_INFO(fmt, ...)                                                     \
+  do {                                                                                \
+    if ((&CheckLogLevel != nullptr) && (&DlogRecord != nullptr)) {                    \
+      dlog_info(AICPU, "[%s:%d][%s][tid:%ld]" fmt, __FILE__, __LINE__, __func__,      \
+                aicpu::GetTid(), ##__VA_ARGS__);                                      \
+    }                                                                                 \
   } while (0)
 
-#define KERNEL_LOG_WARN(fmt, ...)                                                    \
-  do {                                                                               \
-    if (CheckLogLevel(AICPU, DLOG_WARN) == 1) {                                      \
-      if (DlogRecord == nullptr) {                                                   \
-      } else {                                                                       \
-        DlogRecord(AICPU, DLOG_WARN, "[%s:%d][%s][tid:%ld]" fmt, __FILE__, __LINE__, \
-                   __func__, aicpu::GetTid(), ##__VA_ARGS__);                        \
-      }                                                                              \
-    }                                                                                \
+#define KERNEL_LOG_WARN(fmt, ...)                                                     \
+  do {                                                                                \
+    if ((&CheckLogLevel != nullptr) && (&DlogRecord != nullptr)) {                    \
+      dlog_warn(AICPU, "[%s:%d][%s][tid:%ld]" fmt, __FILE__, __LINE__, __func__,      \
+                aicpu::GetTid(), ##__VA_ARGS__);                                      \
+    }                                                                                 \
   } while (0)
 
-#define KERNEL_LOG_ERROR(fmt, ...)                                                  \
-  do {                                                                              \
-    if (DlogRecord == nullptr) {                                                    \
-    } else {                                                                        \
-      DlogRecord(AICPU, DLOG_ERROR, "[%s:%d][%s][tid:%ld]" fmt, __FILE__, __LINE__, \
-                 __func__, aicpu::GetTid(), ##__VA_ARGS__);                         \
-    }                                                                               \
+#define KERNEL_LOG_ERROR(fmt, ...)                                                    \
+  do {                                                                                \
+    if (&DlogRecord != nullptr) {                                                     \
+      dlog_error(AICPU, "[%s:%d][%s][tid:%ld]" fmt, __FILE__, __LINE__, __func__,     \
+                 aicpu::GetTid(), ##__VA_ARGS__);                                     \
+    }                                                                                 \
   } while (0)
 
-#define KERNEL_LOG_EVENT(fmt, ...)                                                                   \
-  do {                                                                                               \
-    if (DlogRecord == nullptr) {                                                                     \
-    } else {                                                                                         \
-      DlogRecord(static_cast<int32_t>(AICPU | RUN_LOG_MASK), DLOG_EVENT, "[%s:%d][%s][tid:%ld]" fmt, \
-                 __FILE__, __LINE__, __func__, aicpu::GetTid(), ##__VA_ARGS__);                      \
-    }                                                                                                \
+#define KERNEL_LOG_EVENT(fmt, ...)                                                    \
+  do {                                                                                \
+    if ((&CheckLogLevel != nullptr) && (&DlogRecord != nullptr)) {                    \
+      dlog_info(static_cast<int32_t>(static_cast<uint32_t>(AICPU) |                   \
+                static_cast<uint32_t>(RUN_LOG_MASK)), "[%s:%d][%s][tid:%ld]" fmt,     \
+                __FILE__, __LINE__, __func__, aicpu::GetTid(), ##__VA_ARGS__);        \
+    }                                                                                 \
   } while (0)
 #endif
 
@@ -122,12 +113,6 @@ const char KERNEL_MODULE[] = "AICPU";
     return errorCode;                                                 \
   }
 
-#define KERNEL_CHECK_FALSE(condition, errorCode, logText...)  \
-  if (!(condition)) {                                         \
-    KERNEL_LOG_ERROR(logText);                                \
-    return errorCode;                                         \
-  }
-
 #define KERNEL_CHECK_FALSE_VOID(condition, logText...)        \
   if (!(condition)) {                                         \
     KERNEL_LOG_ERROR(logText);                                \
@@ -161,4 +146,4 @@ const char KERNEL_MODULE[] = "AICPU";
     }                                                         \
   } while (0)
 
-#endif  // AICPU_CONTEXT_COMMON_LOG_H
+#endif  // AICPU_COMMON_CONTEXT_LOG_H

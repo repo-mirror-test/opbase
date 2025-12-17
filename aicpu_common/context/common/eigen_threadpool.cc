@@ -4,8 +4,9 @@
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+ * the software repository for the full text of the License.
  */
 #include "eigen_threadpool.h"
 
@@ -19,6 +20,7 @@ const uint32_t kTaskSize = 40000;
 const uint32_t kMaxOverShardingFactor = 4;
 const uint32_t kDecimalScaleNum = 10;
 const uint32_t kTotalCostFactor = 210000;
+constexpr int32_t kMaxCoreNum = 48;
 constexpr uint32_t kMaxTaskSize = kTaskSize * kMaxOverShardingFactor;
 }  // namespace
 
@@ -46,19 +48,14 @@ EigenThreadPool *EigenThreadPool::GetInstance() {
         }
       }
 
-      if (core_num_ <= 0 || core_num_ > get_nprocs()) {
-        core_num_ = get_nprocs();  // obtains the number of CPU cores that can
-                                   // be used by users.
+      if (core_num_ <= 0 || core_num_ > kMaxCoreNum) {
+        core_num_ = std::min(std::max(1, get_nprocs()), kMaxCoreNum);
       }
 
-      if (core_num_ <= 0) {
-        KERNEL_LOG_INFO("Get cpu num failed, core num[%d]", core_num_);
-        return nullptr;
-      }
       eigen_threadpool_.reset(new Eigen::ThreadPool(core_num_));
       threadpool_device_.reset(new Eigen::ThreadPoolDevice(eigen_threadpool_.get(), core_num_));
       init_flag_ = true;
-      KERNEL_LOG_INFO("EigenThreadPool init success, core number[%d]", core_num_);
+      KERNEL_LOG_EVENT("Eigen thread pool init success, core number[%d]", core_num_);
     }
   }
 

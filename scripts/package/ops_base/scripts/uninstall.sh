@@ -5,8 +5,9 @@
 # This file is a part of the CANN Open Software.
 # Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
 # Please refer to the License for details. You may not use this file except in compliance with the License.
-# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
-# See LICENSE in the root of the software repository for the full text of the License.
+# THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+# BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+# the software repository for the full text of the License.
 # ----------------------------------------------------------------------------
 
 _CURR_PATH=$(dirname $(readlink -f $0))
@@ -54,7 +55,7 @@ install_shell="${_CURR_PATH}/install.sh"
 
 # shell exist check
 if [ ! -f "${install_shell}" ]; then
-    logandprint "[ERROR]: ERR_NO:${FILE_NOT_EXIST};OpsBase module is not installed or some ops_base source files are lost.\
+    logandprint "[ERROR]: ERR_NO:${FILE_NOT_EXIST};OpsBase module is not installed or some opbase source files are lost.\
 If there are any residual files, please manually remove those files."
     exit 1
 fi
@@ -67,7 +68,7 @@ to a right permission."
     exit 1
 fi
 
-installed_path="$(cd "${_CURR_PATH}/../../"; pwd)"
+installed_path="$(cd "${_CURR_PATH}/../../../../../"; pwd)"
 parent_installed_path="$(cd "${installed_path}/../"; pwd)"
 cd ~
 sh "${install_shell}" "--aa" "--aa" "--uninstall" "--install-path=${installed_path}" "${quiet_parameter}"

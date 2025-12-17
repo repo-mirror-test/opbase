@@ -4,8 +4,9 @@
  * This file is a part of the CANN Open Software.
  * Licensed under CANN Open Software License Agreement Version 2.0 (the "License").
  * Please refer to the License for details. You may not use this file except in compliance with the License.
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
- * See LICENSE in the root of the software repository for the full text of the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED, INCLUDING
+ * BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE. See LICENSE in the root of
+ * the software repository for the full text of the License.
  */
 
 /*!
@@ -58,6 +59,7 @@ struct OPBASE_API ElewiseTilingData {
     int64_t ubFormer;
     int64_t blockFormer;
     int64_t blockNum;
+    int64_t coreNum;
     int64_t ubLoopOfFormerBlock;
     int64_t ubLoopOfTailBlock;
     int64_t ubTailOfFormerBlock;
@@ -74,6 +76,12 @@ class OPBASE_API ElewiseBaseTiling {
     ge::graphStatus DoTiling(EleBaseTilingData& eleTilingData, int64_t extraSize = 0, int64_t extraBufferNum = 0);
     template <typename OpDag, bool CheckShape>
     ge::graphStatus DoTiling(ElewiseTilingData& elewiseTilingData, int64_t extraSize = 0, int64_t extraBufferNum = 0);
+    template <typename OpDag, bool CheckShape = true>
+    ge::graphStatus DoTiling32B(int64_t extraSize = 0, int64_t extraBufferNum = 0);
+
+    template <typename T>
+    void SetScalar(T value);
+    int64_t GetBlockDim();
 
   private:
     int64_t GetScheMode();
@@ -81,7 +89,13 @@ class OPBASE_API ElewiseBaseTiling {
     template <bool CheckShape = true>
     ge::graphStatus GetShapeInfo();
     void AdaptEleBaseTilingData(const ElewiseTilingData& elewiseTilingData, EleBaseTilingData& eleBaseTilingData);
+    ge::graphStatus AdaptEleBaseTilingData32B(const ElewiseTilingData& elewiseTilingData);
+    EleBaseTilingData32B *Ele32BTilingData = nullptr;
+    EleBaseTilingData24B *Ele24BTilingData = nullptr;
+    char scalarData[ELEWISE_MAX_SCALAR_BYTES] = {0};
     gert::TilingContext* context_{nullptr};
+    uint32_t offset = 0;
+    int64_t blockDim;
     uint64_t coreNum{0};
     uint64_t ubSize{0};
     gert::Shape shape;
@@ -93,8 +107,24 @@ OPBASE_API bool IsSameElewiseShape(const gert::Shape&, const gert::Shape&);
 template <bool CheckShape>
 ge::graphStatus ElewiseBaseTiling::GetShapeInfo() {
     auto outputShape = context_->GetOutputShape(0);
-    OP_CHECK_NULL_WITH_CONTEXT(context_, outputShape);
-    shape = outputShape->GetStorageShape();
+    if (outputShape == nullptr) {
+        OP_LOGW(context_, "will ignore output shape check");
+        for (uint64_t i = 0; i < context_->GetComputeNodeInputNum(); i++) {
+            auto inputShape = context_->GetInputShape(i);
+            if (inputShape == nullptr) {
+                OP_LOGI(context_, "Input[%lu] is nullptr, will ignore set max elewise shape.", i);
+                continue;
+            }
+
+            shape = inputShape->GetStorageShape();
+            if (!(shape.IsScalar() || shape.GetShapeSize() == 1)) {
+                OP_LOGI(context_, "Input[%lu] is not scalar, will set max elewise shape", i);
+                break;
+            }
+        }
+    } else {
+        shape = outputShape->GetStorageShape();
+    }
     if (!CheckShape) {
         return ge::GRAPH_SUCCESS;
     }
@@ -151,6 +181,30 @@ ge::graphStatus ElewiseBaseTiling::DoTiling(EleBaseTilingData& eleTilingDataV2, 
     }
     AdaptEleBaseTilingData(elewiseTilingData, eleTilingDataV2);
     return ge::GRAPH_SUCCESS;
+}
+
+template <typename OpDag, bool CheckShape>
+ge::graphStatus ElewiseBaseTiling::DoTiling32B(int64_t extraSize, int64_t extraBufferNum) {
+    ElewiseTilingData elewiseTilingData;
+    auto status = DoTiling<OpDag, CheckShape>(elewiseTilingData, extraSize, extraBufferNum);
+    if (status != ge::GRAPH_SUCCESS) {
+        OP_LOGE(context_, "Do elewise tiling failed.");
+        return ge::GRAPH_FAILED;
+    }
+    return AdaptEleBaseTilingData32B(elewiseTilingData);
+}
+
+template <typename T>
+void ElewiseBaseTiling::SetScalar(T value)
+{
+    if (Ele24BTilingData != nullptr) {
+        *reinterpret_cast<T*>(&Ele24BTilingData->scalarData[offset]) = value;
+    } else if (Ele32BTilingData != nullptr) {
+        *reinterpret_cast<T*>(&Ele32BTilingData->scalarData[offset]) = value;
+    } else {
+        *reinterpret_cast<T*>(&scalarData[offset]) = value;
+    }
+    offset += sizeof(T);
 }
 
 } // namespace Base

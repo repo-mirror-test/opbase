@@ -1,0 +1,262 @@
+/**
+ * Copyright (c) 2025 Huawei Technologies Co., Ltd.
+ * This program is free software, you can redistribute it and/or modify it under the terms and contiditions of
+ * CANN Open Software License Agreement Version 2.0 (the "License").
+ * Please refer to the License for details. You may not use this file except in compliance with the License.
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT, MERCHANTABILITY, OR FITNESS FOR A PARTICULAR PURPOSE.
+ * See LICENSE in the root of the software repository for the full text of the License.
+ */
+#include "indv_compute_node_info.h"
+#include "securec.h"
+#include "exe_graph/runtime/continuous_vector.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+aclnnStatus NnopbaseComputeNodeAttrsUpdt(NnopbaseComputeNodeInfoExt *nodeExt, NnopbaseAttrs *attrs)
+{
+    NnopbaseRuntimeAttrsDef *attrDef = nodeExt->attrStart;
+    NnopbaseUChar *ptr = (NnopbaseUChar *) attrDef;
+    size_t current_offset = sizeof(NnopbaseRuntimeAttrsDef) + sizeof(size_t) * attrs->num;
+    attrDef->attr_num = attrs->num;
+    for (size_t i = 0U; i < attrDef->attr_num; i++) {
+        attrDef->offset[i] = current_offset;
+        if (attrs->attrs[i].addr.isVector) {
+            const size_t totalSize = sizeof(gert::ContinuousVector) + attrs->attrs[i].addr.size;
+            gert::ContinuousVector *const vector = (gert::ContinuousVector *)(ptr + current_offset);
+            const size_t capacity = attrs->attrs[i].addr.size / attrs->attrs[i].addr.elementSize;
+            const size_t size = attrs->attrs[i].addr.size / attrs->attrs[i].addr.elementSize;
+            vector->Init(capacity);
+            const auto ret = vector->SetSize(size);
+            NNOPBASE_ASSERT_TRUE_RETVAL(ret == ge::GRAPH_SUCCESS);
+            const auto memRet = memcpy_s(vector->MutableData(), attrs->attrs[i].addr.size,
+                                         attrs->attrs[i].addr.addr, attrs->attrs[i].addr.size);
+            CHECK_COND(memRet == EOK, ACLNN_ERR_PARAM_INVALID,
+                       "Memcpy failed! ret = %d, src = %p, dst = %p, len = %zu.",
+                       memRet, attrs->attrs[i].addr.addr, vector->MutableData(), attrs->attrs[i].addr.size);
+            current_offset += totalSize;
+        } else {
+            const auto ret = memcpy_s(ptr + current_offset, attrs->attrs[i].addr.size,
+                                      attrs->attrs[i].addr.addr, attrs->attrs[i].addr.size);
+            CHECK_COND(ret == EOK, ACLNN_ERR_PARAM_INVALID, "Memcpy failed! ret = %d, src = %p, dst = %p, len = %zu.",
+                       ret, attrs->attrs[i].addr.addr, ptr + current_offset, attrs->attrs[i].addr.size);
+            current_offset += attrs->attrs[i].addr.size;
+        }
+    }
+    return OK;
+}
+
+aclnnStatus NnopbaseMemsetV2ComputeNodeAttrsUpdate(NnopbaseExecutor *executor)
+{
+    void* attrDatas[NNOPBASE_MEMSET_V2_OP_ATTR_COUNT] = {
+        executor->args->binInfo->memsetInfo->intAttrs.data(),
+        executor->args->binInfo->memsetInfo->floatAttrs.data(),
+    };
+    size_t attrSizes[NNOPBASE_MEMSET_V2_OP_ATTR_COUNT] = {
+        executor->args->binInfo->memsetInfo->intAttrs.size(),
+        executor->args->binInfo->memsetInfo->floatAttrs.size(),
+    };
+    size_t attrElementSizes[NNOPBASE_MEMSET_V2_OP_ATTR_COUNT] = {
+        sizeof(int64_t),
+        sizeof(float),
+    };
+
+    NnopbaseComputeNodeInfoExt *nodeExt = &executor->args->binInfo->memsetInfo->contextExt.nodeExt;
+    NnopbaseRuntimeAttrsDef *attrDef = nodeExt->attrStart;
+    attrDef->attr_num = NNOPBASE_MEMSET_V2_OP_ATTR_COUNT;
+
+    NnopbaseUChar *ptr = op::internal::PtrCastTo<NnopbaseUChar>(attrDef);
+    size_t current_offset = sizeof(NnopbaseRuntimeAttrsDef) + sizeof(size_t) * NNOPBASE_MEMSET_V2_OP_ATTR_COUNT;
+
+    for (size_t i = 0U; i < NNOPBASE_MEMSET_V2_OP_ATTR_COUNT; i++) {
+        attrDef->offset[i] = current_offset;
+
+        gert::ContinuousVector *const v = op::internal::PtrCastTo<gert::ContinuousVector>(ptr + current_offset);
+        const size_t capacity = attrSizes[i];
+        const size_t size = attrSizes[i];
+        v->Init(capacity);
+        const auto ret = v->SetSize(size);
+        NNOPBASE_ASSERT_TRUE_RETVAL(ret == ge::GRAPH_SUCCESS);
+
+        const size_t attrByteSize = attrSizes[i] * attrElementSizes[i];
+        if (attrSizes[i] > 0) {
+            const auto memRet = memcpy_s(v->MutableData(), attrByteSize, attrDatas[i], attrByteSize);
+            CHECK_COND(memRet == EOK, ACLNN_ERR_PARAM_INVALID,
+                        "Memcpy failed! ret = %d, src = %p, dst = %p, len = %zu.",
+                        memRet, attrDatas[i], v->MutableData(), attrByteSize);
+        }
+
+        const size_t totalSize = sizeof(gert::ContinuousVector) + attrByteSize;
+        current_offset += totalSize;
+    }
+
+    return OK;
+}
+
+aclnnStatus NnopbaseComputeNodeInfoUpdt(NnopbaseExecutor *executor)
+{
+    NnopbaseComputeNodeInfoExt *nodeExt = &executor->contextExt.nodeExt;
+    NnopbaseComputeNodeInfo *node = nodeExt->node;
+    const size_t count = static_cast<size_t>(executor->args->inputs.paramDescs.count);
+    const size_t outputIrNum = static_cast<size_t>(executor->args->outputs.paramDescs.count);
+
+    if (!executor->contextExt.hasPrepared) {
+        node->nodeType = executor->opType;
+        node->nodeName = executor->opType;
+        node->irInputsNum = count;
+        node->irOutputsNum = outputIrNum;
+    }
+    node->inputsNum = executor->args->inputs.num;
+    node->outputsNum = executor->args->outputs.num;
+    node->attrSize = sizeof(NnopbaseRuntimeAttrsDef) + executor->attrs.totalSize +
+                     sizeof(size_t) * executor->attrs.num;
+    if ((executor->attrs.num != 0U) || executor->args->inputs.hasDynamic || executor->args->outputs.hasDynamic) {
+        const size_t size = NnopbaseComputeNodeCalcLen(executor);
+        if (size + sizeof(NnopbaseComputeNodeInfo) > nodeExt->bufLen) {
+            node = (NnopbaseComputeNodeInfo *)malloc(sizeof(NnopbaseComputeNodeInfo) + size);
+            NNOPBASE_ASSERT_NOTNULL_RETVAL(node);
+            nodeExt->node = node;
+            auto ret = memcpy_s(node, sizeof(NnopbaseComputeNodeInfo), nodeExt->buf, sizeof(NnopbaseComputeNodeInfo));
+            // 异常分支node随nodeExt，跟随executor销毁时释放
+            CHECK_COND(ret == EOK, ACLNN_ERR_PARAM_INVALID, "Memcpy failed! ret = %d, src = %p, dst = %p, len = %zu.",
+                       ret, nodeExt->buf, node, sizeof(NnopbaseComputeNodeInfo));
+
+            if (nodeExt->buf != nullptr) {
+                free(nodeExt->buf);
+            }
+            nodeExt->buf = (NnopbaseUChar*)node;
+            nodeExt->bufLen = sizeof(NnopbaseComputeNodeInfo) + size;
+            nodeExt->instStart = (NnopbaseAnchorInstanceInfo*)(&(node->place_holder));
+        }
+    }
+    nodeExt->inputTdStart = (NnopbaseCompileTimeTensorDesc *)(nodeExt->instStart + count);
+    nodeExt->outputTdStart = nodeExt->inputTdStart + node->inputsNum;
+    nodeExt->attrStart = (NnopbaseRuntimeAttrsDef *)(nodeExt->outputTdStart + node->outputsNum);
+    nodeExt->outputInstStart =
+        (NnopbaseAnchorInstanceInfo*)((NnopbaseUChar *)nodeExt->attrStart + nodeExt->node->attrSize);
+
+    const NnopbaseParamDesc *const desc = &executor->args->inputs.paramDescs;
+    for (size_t i = 0U; i < count; i++) {
+        NNOPBASE_ASSERT_OK_RETVAL(
+            NnopbaseComputeNodeSetInstInfo(nodeExt->node->irInputsNum, i, nodeExt->instStart,
+                desc->instances[i].startIndex, desc->instances[i].num));
+    }
+    const NnopbaseParamDesc *const outputDesc = &executor->args->outputs.paramDescs;
+    for (size_t i = 0U; i < outputIrNum; i++) {
+        NNOPBASE_ASSERT_OK_RETVAL(
+            NnopbaseComputeNodeSetInstInfo(nodeExt->node->irOutputsNum, i, nodeExt->outputInstStart,
+                outputDesc->instances[i].startIndex, outputDesc->instances[i].num));
+    }
+    return OK;
+}
+
+aclnnStatus NnopbaseMemsetV2ComputeNodeInfoUpdate(NnopbaseExecutor *executor)
+{
+    NnopbaseKernelRunContextExt *contextExt = &executor->args->binInfo->memsetInfo->contextExt;
+    NnopbaseComputeNodeInfoExt *nodeExt = &contextExt->nodeExt;
+    NnopbaseComputeNodeInfo *node = nodeExt->node;
+
+    if (!contextExt->hasPrepared) {
+        node->nodeType = NNOPBASE_MEMSET_V2_OP_NAME.c_str();
+        node->nodeName = NNOPBASE_MEMSET_V2_OP_NAME.c_str();
+        node->irInputsNum = NNOPBASE_MEMSET_V2_OP_INPUT_COUNT;
+        node->irOutputsNum = NNOPBASE_MEMSET_V2_OP_OUTPUT_COUNT;
+        OP_LOGD("Update node info with nodeType %s, nodeName %s, irInputsNum %llu, irOutputsNum %llu.",
+            node->nodeType, node->nodeName, node->irInputsNum, node->irOutputsNum);
+    }
+    node->inputsNum = executor->args->binInfo->tensorNeedMemSetV2;
+    node->outputsNum = executor->args->binInfo->tensorNeedMemSetV2;
+    
+    uint32_t attrNum = executor->args->binInfo->memsetInfo->attrNum;
+    size_t intAttrsSize = sizeof(int64_t) * executor->args->binInfo->memsetInfo->intAttrs.size();
+    size_t floatAttrsSize = sizeof(float) * executor->args->binInfo->memsetInfo->floatAttrs.size();
+    size_t attrTotalSize = attrNum * sizeof(gert::ContinuousVector) + intAttrsSize + floatAttrsSize;
+    node->attrSize = sizeof(NnopbaseRuntimeAttrsDef) + attrTotalSize + sizeof(size_t) * attrNum;
+
+    const size_t size = NnopbaseMemsetV2ComputeNodeCalcLen(executor);
+    OP_LOGD("Update node attr size %llu, node size %llu, buffer length %llu bytes.",
+        node->attrSize, size, nodeExt->bufLen);
+    if (size + sizeof(NnopbaseComputeNodeInfo) > nodeExt->bufLen) {
+        node = op::internal::PtrCastTo<NnopbaseComputeNodeInfo>(malloc(sizeof(NnopbaseComputeNodeInfo) + size));
+        NNOPBASE_ASSERT_NOTNULL_RETVAL(node);
+        nodeExt->node = node;
+        auto ret = memcpy_s(node, sizeof(NnopbaseComputeNodeInfo), nodeExt->buf, sizeof(NnopbaseComputeNodeInfo));
+        CHECK_COND(ret == EOK, ACLNN_ERR_PARAM_INVALID, "Memcpy failed! ret = %d, src = %p, dst = %p, len = %zu.",
+                    ret, nodeExt->buf, node, sizeof(NnopbaseComputeNodeInfo));
+
+        if (nodeExt->buf != nullptr) {
+            free(nodeExt->buf);
+        }
+        nodeExt->buf = op::internal::PtrCastTo<NnopbaseUChar>(node);
+        nodeExt->bufLen = sizeof(NnopbaseComputeNodeInfo) + size;
+        nodeExt->instStart = op::internal::PtrCastTo<NnopbaseAnchorInstanceInfo>(&(node->place_holder));
+    }
+
+    nodeExt->inputTdStart = op::internal::PtrCastTo<NnopbaseCompileTimeTensorDesc>(
+        nodeExt->instStart + NNOPBASE_MEMSET_V2_OP_INPUT_COUNT);
+    nodeExt->outputTdStart = nodeExt->inputTdStart + node->inputsNum;
+    nodeExt->attrStart = op::internal::PtrCastTo<NnopbaseRuntimeAttrsDef>(nodeExt->outputTdStart + node->outputsNum);
+    nodeExt->outputInstStart = op::internal::PtrCastTo<NnopbaseAnchorInstanceInfo>(
+        op::internal::PtrCastTo<NnopbaseUChar>(nodeExt->attrStart) + nodeExt->node->attrSize);
+
+    NNOPBASE_ASSERT_OK_RETVAL(NnopbaseComputeNodeSetInstInfo(nodeExt->node->irInputsNum,
+                0, nodeExt->instStart, 0, executor->args->binInfo->tensorNeedMemSetV2));
+    NNOPBASE_ASSERT_OK_RETVAL(NnopbaseComputeNodeSetInstInfo(nodeExt->node->irOutputsNum,
+                0, nodeExt->outputInstStart, 0, executor->args->binInfo->tensorNeedMemSetV2));
+    OP_LOGD("The update of the computing node information is complete.");
+    return OK;
+}
+
+aclnnStatus NnopbaseComputeNodeInfoInit(NnopbaseComputeNodeInfoExt *nodeExt)
+{
+    nodeExt->node = (NnopbaseComputeNodeInfo *)malloc(sizeof(NnopbaseComputeNodeInfo) + NNOPBASE_COMPUTE_NODE_BUF_LEN);
+    NNOPBASE_ASSERT_NOTNULL_RETVAL(nodeExt->node);
+    nodeExt->node->nodeType = nullptr;
+    nodeExt->node->nodeName = nullptr;
+    nodeExt->node->irInputsNum = 0U;
+    nodeExt->node->inputsNum = 0U;
+    nodeExt->node->outputsNum = 0U;
+    nodeExt->node->irOutputsNum = 0U;
+    nodeExt->node->attrSize = 0U;
+    nodeExt->inputTdStart = nullptr;
+    nodeExt->outputTdStart = nullptr;
+    nodeExt->attrStart = nullptr;
+    nodeExt->buf = (NnopbaseUChar*)nodeExt->node;
+    nodeExt->bufLen = sizeof(NnopbaseComputeNodeInfo) + NNOPBASE_COMPUTE_NODE_BUF_LEN;
+    nodeExt->instStart = (NnopbaseAnchorInstanceInfo*)(&(nodeExt->node->place_holder));
+    nodeExt->outputInstStart = nullptr;
+    return OK;
+}
+
+aclnnStatus NnopbaseTilingContextUpdtPrepare(NnopbaseExecutor *executor)
+{
+    NnopbaseKernelRunContext *const context = executor->contextExt.context;
+    NNOPBASE_ASSERT_OK_RETVAL(NnopbaseComputeNodeInfoUpdt(executor));
+    context->input_size =
+        static_cast<size_t>(executor->args->inputs.num + executor->args->outputs.num + static_cast<uint32_t>(kInputsAppendEnd));
+    context->output_size = gert::TilingContext::kOutputNum;
+    context->output_start = &context->values[context->input_size];
+    context->compute_node_info = executor->contextExt.nodeExt.node;
+    return OK;
+}
+
+aclnnStatus NnopbaseMemsetV2TilingContextUpdatePrepare(NnopbaseExecutor *executor)
+{
+    NnopbaseKernelRunContextExt *contextExt = &executor->args->binInfo->memsetInfo->contextExt;
+    NnopbaseKernelRunContext *const context = contextExt->context;
+
+    NNOPBASE_ASSERT_OK_RETVAL(NnopbaseMemsetV2ComputeNodeInfoUpdate(executor));
+
+    context->input_size = executor->args->binInfo->tensorNeedMemSetV2 * 2U + static_cast<uint32_t>(kInputsAppendEnd);
+    context->output_size = gert::TilingContext::kOutputNum;
+    context->output_start = &context->values[context->input_size];
+    context->compute_node_info = contextExt->nodeExt.node;
+
+    return OK;
+}
+
+#ifdef __cplusplus
+}
+#endif
