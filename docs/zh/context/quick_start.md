@@ -21,7 +21,7 @@ bash install_deps.sh
 
 1. **安装社区版CANN toolkit包**
 
-    根据实际环境，下载对应`Ascend-cann-toolkit_${cann_version}_linux-${arch}.run`包，[下载链接](https://ascend.devcloud.huaweicloud.com/cann/run/software)。
+    根据实际环境，下载对应`Ascend-cann-toolkit_${cann_version}_linux-${arch}.run`包，[下载链接](https://ascend.devcloud.huaweicloud.com/cann/run/software/8.5.0-beta.1)。
     
     安装命令如下：
 
