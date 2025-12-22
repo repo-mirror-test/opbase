@@ -121,6 +121,7 @@ is_quiet="$3"
 _CHIP_TYPE="$4"
 is_docker_install="$5"
 docker_root="$6"
+pkg_version_dir="$7"
 paramter_num="$#"
 
 logandprint "[INFO]: Command ops_base_uninstall"
@@ -234,15 +235,14 @@ done
 chmod "${_CUSTOM_PERM}" "${_TARGET_INSTALL_PATH}/${ops_base_platform_dir}" 2> /dev/null
 
 get_version "pkg_version" "$_VERSION_INFO_FILE"
-get_version_dir "pkg_version_dir" "$_VERSION_INFO_FILE"
 
 # delete opbase source files
 unsetenv
 
-is_multi_version_pkg "pkg_is_multi_version" "$_VERSION_INFO_FILE "
-if [ "$pkg_is_multi_version" = "true" ]; then
-    get_version_dir "pkg_version_dir" "$_VERSION_INFO_FILE"
-fi
+# is_multi_version_pkg "pkg_is_multi_version" "$_VERSION_INFO_FILE "
+# if [ "$pkg_is_multi_version" = "true" ]; then
+#     get_version_dir "pkg_version_dir" "$_VERSION_INFO_FILE"
+# fi
 
 if [ "${pkg_version_dir}" = "" ]; then
     FINAL_INSTALL_PATH=${_ABS_INSTALL_PATH}

@@ -392,7 +392,7 @@ path or clean the previous version opbase install info (/etc/ascend_install.info
                 return 1
             fi
         else
-            sh "${_UNINSTALL_SHELL_FILE}" "${target_dir}" "uninstall" "${is_quiet}" $in_feature "${is_docker_install}" "${docker_root}"
+            sh "${_UNINSTALL_SHELL_FILE}" "${target_dir}" "uninstall" "${is_quiet}" $in_feature "${is_docker_install}" "${docker_root}" "$pkg_version_dir"
             if [ "$?" != 0 ]; then
                 logandprint "[ERROR]: ERR_NO:${INSTALL_FAILED};ERR_DES:Clean the installed directory failed."
                 return 1
@@ -666,8 +666,8 @@ check_version_file () {
 
 
 check_opp_version_file () {
-    if [ -f "${_CURR_PATH}/../../version.info" ];then
-        opp_ver_info="${_CURR_PATH}/../../version.info"
+    if [ -f "${_CURR_PATH}/../version.info" ];then
+        opp_ver_info="${_CURR_PATH}/../version.info"
     elif [ -f "${_DEFAULT_INSTALL_PATH}/${opp_platform_dir}/version.info" ];then
         opp_ver_info="${_DEFAULT_INSTALL_PATH}/${opp_platform_dir}/version.info"
     else
@@ -1144,6 +1144,11 @@ do
         is_for_all=y
         shift
         ;;
+    --check)
+        is_check=y
+        iter_i=$(( ${iter_i} + 1 ))
+        shift
+        ;;
     -*)
         echo "[OpsBase] [ERROR]: ERR_NO:${PARAM_INVALID};ERR_DES:Unsupported parameters [$1], \
 operation execute failed. Please use [--help] to see the useage."
@@ -1182,6 +1187,13 @@ if [ "${is_input_path}" != y ]; then
     _TARGET_INSTALL_PATH="${_DEFAULT_INSTALL_PATH}"
 else
     _TARGET_INSTALL_PATH="${in_install_path_param}"
+fi
+
+if is_version_dirpath "$_TARGET_INSTALL_PATH"; then
+    pkg_version_dir="$(basename "$_TARGET_INSTALL_PATH")"
+    _TARGET_INSTALL_PATH="$(dirname "$_TARGET_INSTALL_PATH")"
+else
+    pkg_version_dir="cann"
 fi
 
 if [ "$pkg_is_multi_version" = "true" ]; then
@@ -1552,7 +1564,7 @@ user group (${_DEFAULT_USERGROUP}) for devel mode? [y/n]"
     if [ -d "${target_dir}/opbase" ] && [ ! -L "${target_dir}/opbase" ] && [ -f "${target_dir}/opbase/script/uninstall.sh" ]; then
         bash "${target_dir}/opbase/script/uninstall.sh"
     fi
-    sh "${_INSTALL_SHELL_FILE}" "${_TARGET_INSTALL_PATH}" "${_DEFAULT_USERNAME}" "${_DEFAULT_USERGROUP}" "${in_feature}" "${in_install_type}" "${is_quiet}" "${_FIRST_NOT_EXIST_DIR}" "${is_the_last_dir_opp}" "${is_for_all}" "${is_setenv}" "${is_docker_install}" "${docker_root}" "${is_input_path}" "${in_feature_new}" "${chip_type_new}"
+    sh "${_INSTALL_SHELL_FILE}" "${_TARGET_INSTALL_PATH}" "${_DEFAULT_USERNAME}" "${_DEFAULT_USERGROUP}" "${in_feature}" "${in_install_type}" "${is_quiet}" "${_FIRST_NOT_EXIST_DIR}" "${is_the_last_dir_opp}" "${is_for_all}" "${is_setenv}" "${is_docker_install}" "${docker_root}" "${is_input_path}" "${in_feature_new}" "${chip_type_new}" "$pkg_version_dir"
     if [ "$?" != 0 ]; then
         logoperationretstatus "install" "${in_install_type}" "1" "${in_cmd_list}"
     fi
@@ -1625,7 +1637,7 @@ if [ "${is_uninstall}" = "y" ];then
     fi
     # call opp_uninstall.sh
 #    aicpuinfofile "remove"
-    sh "${_UNINSTALL_SHELL_FILE}" "${_TARGET_INSTALL_PATH}" "uninstall" "${is_quiet}" $in_feature "${is_docker_install}" "${docker_root}"
+    sh "${_UNINSTALL_SHELL_FILE}" "${_TARGET_INSTALL_PATH}" "uninstall" "${is_quiet}" $in_feature "${is_docker_install}" "${docker_root}" "$pkg_version_dir"
     # remove precheck info in ${target_dir}/bin/prereq_check.bash
     logandprint "[INFO]: Remove precheck info."
 
