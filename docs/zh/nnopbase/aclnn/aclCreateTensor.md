@@ -1,6 +1,6 @@
 # aclCreateTensor<a name="ZH-CN_TOPIC_0000001983690164"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 根据Tensor的数据类型、数据排布格式、维度、步长、偏移、Device侧存储地址等数据，创建aclTensor对象，作为单算子API执行接口的入参。
 
@@ -16,8 +16,6 @@ aclTensor *aclCreateTensor(const int64_t *viewDims, uint64_t viewDimsNum, aclDat
 
 >**说明：** 
 >
->-   aclDataType是框架定义的一种数据类型枚举类，具体参见。
->-   aclFormat是框架定义的一种数据格式枚举类，具体参见。
 >-   关于aclTensor的StorageShape和ViewShape：
 >   -   ViewShape表示Tensor的逻辑shape，是Tensor在实际使用时需要用到的大小。
 >   -   StorageShape表示Tensor的实际物理排布shape，是Tensor在内存上实际存在的大小。
@@ -104,7 +102,7 @@ aclTensor *aclCreateTensor(const int64_t *viewDims, uint64_t viewDimsNum, aclDat
 
 成功则返回创建好的aclTensor，否则返回nullptr。
 
-## 约束与限制<a name="section20759749885"></a>
+## 约束说明<a name="section20759749885"></a>
 
 -   本接口需与[aclDestroyTensor](aclDestroyTensor.md)接口配套使用，分别完成aclTensor的创建与销毁。
 -   如需创建多个aclTensor对象，可调用[aclCreateTensorList](aclCreateTensorList.md)接口来存储张量列表。

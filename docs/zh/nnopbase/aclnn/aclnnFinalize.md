@@ -1,6 +1,6 @@
 # aclnnFinalize<a name="ZH-CN_TOPIC_0000002020090285"></a>
 
-## 函数功能<a name="section550175018127"></a>
+## 功能说明<a name="section550175018127"></a>
 
 单算子API执行框架中aclnnXxx接口的去初始化函数，在进程退出前必须先释放进程内aclnn相关资源，否则会导致系统内部出错，影响业务正常运行。
 
@@ -21,7 +21,7 @@ aclnnStatus aclnnFinalize()
 
 返回0表示成功，返回其他值表示失败，返回码列表参见[公共接口返回码](公共接口返回码.md)。
 
-## 约束与限制<a name="section5800181917576"></a>
+## 约束说明<a name="section5800181917576"></a>
 
 -   本接口需与[aclnnInit](aclnnInit.md)初始化接口配套使用，分别完成aclnn资源初始化与去初始化。
 -   一个进程内只允许调用一次aclnnFinalize接口，不支持重复调用。

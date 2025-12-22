@@ -1,6 +1,6 @@
 # aclSetInputTensorAddr<a name="ZH-CN_TOPIC_0000001983690196"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 通过[aclSetAclOpExecutorRepeatable](aclSetAclOpExecutorRepeatable.md)使能aclOpExecutor可复用后，若**输入Device内存地址变更**，需要刷新**输入aclTensor**中记录的Device内存地址。
 
@@ -62,7 +62,7 @@ aclnnStatus aclSetInputTensorAddr(aclOpExecutor *executor, const size_t index, a
 -   返回161002：index取值越界。
 -   返回161002：第一次执行一阶段接口aclxxXxxGetWorkspaceSize时传入的aclTensor是nullptr，不再支持刷新地址。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 

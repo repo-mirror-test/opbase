@@ -61,7 +61,7 @@ void SetIntData(const int64_t *value, uint64_t size, op::DataType dataType)
 // 初始化一块int64内存，赋值给input的前10个元素
 void Func(const aclTensor *input) {
     int64_t myArray[10];
-    input->SetData(myArray, 10, DT_INT64);
+    input->SetIntData(myArray, 10, DT_INT64);
 }
 ```
 

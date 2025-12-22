@@ -1,27 +1,5 @@
 # GetAicCoreNum<a name="ZH-CN_TOPIC_0000002483215685"></a>
 
-## 产品支持情况<a name="section198166384418"></a>
-
-<a name="table108160383416"></a>
-<table><thead align="left"><tr id="row1881619389412"><th class="cellrowborder" valign="top" width="57.99999999999999%" id="mcps1.1.3.1.1"><p id="p19816133820412"><a name="p19816133820412"></a><a name="p19816133820412"></a><span id="ph981612387420"><a name="ph981612387420"></a><a name="ph981612387420"></a>产品</span></p>
-</th>
-<th class="cellrowborder" align="center" valign="top" width="42%" id="mcps1.1.3.1.2"><p id="p1581612387415"><a name="p1581612387415"></a><a name="p1581612387415"></a>是否支持</p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row781616381148"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p1381612380415"><a name="p1381612380415"></a><a name="p1381612380415"></a><span id="ph681618388416"><a name="ph681618388416"></a><a name="ph681618388416"></a><term id="zh-cn_topic_0000001312391781_term1253731311225"><a name="zh-cn_topic_0000001312391781_term1253731311225"></a><a name="zh-cn_topic_0000001312391781_term1253731311225"></a>Atlas A3 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term12835255145414"><a name="zh-cn_topic_0000001312391781_term12835255145414"></a><a name="zh-cn_topic_0000001312391781_term12835255145414"></a>Atlas A3 推理系列产品</term></span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p12816103818413"><a name="p12816103818413"></a><a name="p12816103818413"></a>√</p>
-</td>
-</tr>
-<tr id="row108161438444"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p12816203812416"><a name="p12816203812416"></a><a name="p12816203812416"></a><span id="ph1881615381045"><a name="ph1881615381045"></a><a name="ph1881615381045"></a><term id="zh-cn_topic_0000001312391781_term11962195213215"><a name="zh-cn_topic_0000001312391781_term11962195213215"></a><a name="zh-cn_topic_0000001312391781_term11962195213215"></a>Atlas A2 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term1551319498507"><a name="zh-cn_topic_0000001312391781_term1551319498507"></a><a name="zh-cn_topic_0000001312391781_term1551319498507"></a>Atlas 800I A2 推理产品</term>/A200I A2 Box 异构组件</span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p48163381747"><a name="p48163381747"></a><a name="p48163381747"></a>√</p>
-</td>
-</tr>
-</tbody>
-</table>
-
 ## 功能说明<a name="section28189382416"></a>
 
 获取平台AI Cube的核数。

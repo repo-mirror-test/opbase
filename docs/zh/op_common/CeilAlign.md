@@ -1,27 +1,5 @@
 # CeilAlign<a name="ZH-CN_TOPIC_0000002483215681"></a>
 
-## 产品支持情况<a name="section519417471065"></a>
-
-<a name="table16194747861"></a>
-<table><thead align="left"><tr id="row14194184714610"><th class="cellrowborder" valign="top" width="57.99999999999999%" id="mcps1.1.3.1.1"><p id="p13194174712620"><a name="p13194174712620"></a><a name="p13194174712620"></a><span id="ph4194147660"><a name="ph4194147660"></a><a name="ph4194147660"></a>产品</span></p>
-</th>
-<th class="cellrowborder" align="center" valign="top" width="42%" id="mcps1.1.3.1.2"><p id="p20194184711615"><a name="p20194184711615"></a><a name="p20194184711615"></a>是否支持</p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row1219420475611"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p519419471461"><a name="p519419471461"></a><a name="p519419471461"></a><span id="ph13194124712611"><a name="ph13194124712611"></a><a name="ph13194124712611"></a><term id="zh-cn_topic_0000001312391781_term1253731311225"><a name="zh-cn_topic_0000001312391781_term1253731311225"></a><a name="zh-cn_topic_0000001312391781_term1253731311225"></a>Atlas A3 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term12835255145414"><a name="zh-cn_topic_0000001312391781_term12835255145414"></a><a name="zh-cn_topic_0000001312391781_term12835255145414"></a>Atlas A3 推理系列产品</term></span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p15194204716611"><a name="p15194204716611"></a><a name="p15194204716611"></a>√</p>
-</td>
-</tr>
-<tr id="row1019414711618"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p1019415471369"><a name="p1019415471369"></a><a name="p1019415471369"></a><span id="ph7194447965"><a name="ph7194447965"></a><a name="ph7194447965"></a><term id="zh-cn_topic_0000001312391781_term11962195213215"><a name="zh-cn_topic_0000001312391781_term11962195213215"></a><a name="zh-cn_topic_0000001312391781_term11962195213215"></a>Atlas A2 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term1551319498507"><a name="zh-cn_topic_0000001312391781_term1551319498507"></a><a name="zh-cn_topic_0000001312391781_term1551319498507"></a>Atlas 800I A2 推理产品</term>/A200I A2 Box 异构组件</span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p8195147861"><a name="p8195147861"></a><a name="p8195147861"></a>√</p>
-</td>
-</tr>
-</tbody>
-</table>
-
 ## 功能说明<a name="section111971647763"></a>
 
 以align为单元，向上对齐。

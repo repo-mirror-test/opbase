@@ -61,7 +61,7 @@ void SetFloatData(const float *value, uint64_t size, op::DataType dataType)
 // 初始化一块float内存，赋值给input的前10个元素
 void Func(const aclTensor *input) {
     float myArray[10];
-    input->SetData(myArray, 10, DT_FLOAT);
+    input->SetFloatData(myArray, 10, DT_FLOAT);
 }
 ```
 

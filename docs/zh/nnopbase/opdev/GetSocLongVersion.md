@@ -27,7 +27,7 @@ const std::string &GetSocLongVersion()
 ```
 void func() {
     // Ascendxxx请替换为实际版本型号
-    if (GetCurrentPlatformInfo().GetLongSocVersion() != "Ascendxxx") {
+    if (GetCurrentPlatformInfo().GetSocLongVersion() != "Ascendxxx") {
         return;
     }
 }

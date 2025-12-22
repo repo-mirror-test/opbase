@@ -1,27 +1,5 @@
 # GetUbBlockSize<a name="ZH-CN_TOPIC_0000002450255794"></a>
 
-## 产品支持情况<a name="section1276119431346"></a>
-
-<a name="table167613435417"></a>
-<table><thead align="left"><tr id="row1076194316411"><th class="cellrowborder" valign="top" width="57.99999999999999%" id="mcps1.1.3.1.1"><p id="p1176144315411"><a name="p1176144315411"></a><a name="p1176144315411"></a><span id="ph9761104319418"><a name="ph9761104319418"></a><a name="ph9761104319418"></a>产品</span></p>
-</th>
-<th class="cellrowborder" align="center" valign="top" width="42%" id="mcps1.1.3.1.2"><p id="p20761743642"><a name="p20761743642"></a><a name="p20761743642"></a>是否支持</p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row9761134313418"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p9761194314417"><a name="p9761194314417"></a><a name="p9761194314417"></a><span id="ph147611543342"><a name="ph147611543342"></a><a name="ph147611543342"></a><term id="zh-cn_topic_0000001312391781_term1253731311225"><a name="zh-cn_topic_0000001312391781_term1253731311225"></a><a name="zh-cn_topic_0000001312391781_term1253731311225"></a>Atlas A3 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term12835255145414"><a name="zh-cn_topic_0000001312391781_term12835255145414"></a><a name="zh-cn_topic_0000001312391781_term12835255145414"></a>Atlas A3 推理系列产品</term></span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p167614430419"><a name="p167614430419"></a><a name="p167614430419"></a>√</p>
-</td>
-</tr>
-<tr id="row5761174313415"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p1376114431047"><a name="p1376114431047"></a><a name="p1376114431047"></a><span id="ph1376113431441"><a name="ph1376113431441"></a><a name="ph1376113431441"></a><term id="zh-cn_topic_0000001312391781_term11962195213215"><a name="zh-cn_topic_0000001312391781_term11962195213215"></a><a name="zh-cn_topic_0000001312391781_term11962195213215"></a>Atlas A2 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term1551319498507"><a name="zh-cn_topic_0000001312391781_term1551319498507"></a><a name="zh-cn_topic_0000001312391781_term1551319498507"></a>Atlas 800I A2 推理产品</term>/A200I A2 Box 异构组件</span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p167617431944"><a name="p167617431944"></a><a name="p167617431944"></a>√</p>
-</td>
-</tr>
-</tbody>
-</table>
-
 ## 功能说明<a name="section7762643544"></a>
 
 获取平台UB（Unified Buffer的简写）的block单元大小，单位bytes。

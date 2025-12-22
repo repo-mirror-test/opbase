@@ -5,6 +5,7 @@
 
 - python >= 3.7.0
 - gcc >= 7.3.0
+- g++ >= 7.3.0
 - cmake >= 3.16.0
 - pigz（可选，安装后可提升打包速度，建议版本 >= 2.4）
 - patch >= 2.7（用于给第三方源码打补丁，如protobuf）
@@ -19,12 +20,10 @@ bash install_deps.sh
 
 ## 环境准备
 
-1. **安装社区版CANN toolkit包**
+1. **安装CANN toolkit包**
 
-    根据实际环境，下载对应`Ascend-cann-toolkit_${cann_version}_linux-${arch}.run`包，[下载链接](https://ascend.devcloud.huaweicloud.com/cann/run/software/8.5.0-beta.1)。
+    单击[下载链接](https://ascend.devcloud.huaweicloud.com/cann/run/software/8.5.0-beta.1)，根据实际环境架构，获取对应的`Ascend-cann-toolkit_${cann_version}_linux-${arch}.run`包。
     
-    安装命令如下：
-
     ```bash
     # 确保安装包具有可执行权限
     chmod +x Ascend-cann-toolkit_${cann_version}_linux-${arch}.run
@@ -33,24 +32,22 @@ bash install_deps.sh
     ```
     - \$\{cann\_version\}：表示CANN包版本号。
     - \$\{arch\}：表示CPU架构，如aarch64、x86_64。
-    - \$\{install\_path\}：表示指定安装路径，默认安装在/usr/local/Ascend目录下。
+    - \$\{install\_path\}：表示指定安装路径，默认安装在`/usr/local/Ascend`目录。
 
 2. **配置环境变量**
-	
-	根据实际场景，选择合适的命令。
 
     ```bash
-   # 默认路径安装，以root用户为例（非root用户，将/usr/local替换为${HOME}）
-   source /usr/local/Ascend/cann/set_env.sh
-   # 指定路径安装
-   # source ${install_path}/cann/set_env.sh
+    # 默认路径安装，以root用户为例（非root用户，将/usr/local替换为${HOME}）
+    source /usr/local/Ascend/cann/set_env.sh
+    # 指定路径安装
+    # source ${install_path}/cann/set_env.sh
     ```
 
 3. **下载源码**
 
     ```bash
     # 下载项目源码，以master分支为例
-    git clone https://gitcode.com/cann/ops-base-dev.git
+    git clone https://gitcode.com/cann/opbase.git
     # 安装根目录requirements.txt依赖
     pip3 install -r requirements.txt
     ```
@@ -79,9 +76,16 @@ bash install_deps.sh
 
     \$\{install\_path\}表示指定安装路径，若不指定，默认安装路径为：`/usr/local/Ascend`；若指定，一般安装在\$\{install\_path\}目录下。
 
+3. **（可选）卸载opbase包**
+
+    ```bash
+    # 卸载命令
+    ./${install_path}/cann/share/info/opbase/script/uninstall.sh
+    ```
+
 ## 本地验证 
 
-通过根目录的build.sh脚本可执行UT或ST用例验证项目功能是否正常，build参数介绍参见[build参数说明](./build.md#参数说明)。
+通过根目录的build.sh脚本执行UT或ST用例验证项目功能是否正常，build参数参见[build参数说明](./build.md#参数说明)。
 
 > 说明：执行UT用例依赖googletest单元测试框架，详细介绍参见[googletest官网](https://google.github.io/googletest/advanced.html#running-a-subset-of-the-tests)。
 

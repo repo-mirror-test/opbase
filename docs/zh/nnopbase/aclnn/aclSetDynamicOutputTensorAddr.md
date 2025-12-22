@@ -1,6 +1,6 @@
 # aclSetDynamicOutputTensorAddr<a name="ZH-CN_TOPIC_0000002020090317"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 通过[aclSetAclOpExecutorRepeatable](aclSetAclOpExecutorRepeatable.md)使能aclOpExecutor可复用后，若**输出Device内存地址变更**，需要刷新**输出aclTensorList**中记录的Device内存地址。
 
@@ -10,7 +10,7 @@
 aclnnStatus aclSetDynamicOutputTensorAddr(aclOpExecutor *executor, size_t irIndex, const size_t relativeIndex, aclTensorList *tensors, void *addr)
 ```
 
-## 参数说明<a name="section75395119104"></a>
+## 参数说明
 
 <a name="zh-cn_topic_0122830089_table438764393513"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0122830089_row53871743113510"><th class="cellrowborder" valign="top" width="28.99%" id="mcps1.1.4.1.1"><p id="zh-cn_topic_0122830089_p1438834363520"><a name="zh-cn_topic_0122830089_p1438834363520"></a><a name="zh-cn_topic_0122830089_p1438834363520"></a>参数名</p>
@@ -59,7 +59,7 @@ aclnnStatus aclSetDynamicOutputTensorAddr(aclOpExecutor *executor, size_t irInde
 </tbody>
 </table>
 
-## 返回值说明<a name="section25791320141317"></a>
+## 返回值说明
 
 返回0表示成功，返回其他值表示失败，返回码列表参见[公共接口返回码](公共接口返回码.md)。
 
@@ -67,13 +67,13 @@ aclnnStatus aclSetDynamicOutputTensorAddr(aclOpExecutor *executor, size_t irInde
 
 -   返回561103：executor或tensors是空指针。
 -   返回161002：relativeIndex\>=tensors里tensor的个数。
--   返回161002：irIndex\>算子原型输出参数的个数。
+-   返回161002：irIndex\>=算子原型输出参数的个数。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明
 
 无
 
-## 调用示例<a name="section18927254114910"></a>
+## 调用示例
 
 关键代码示例如下，仅供参考，不支持直接拷贝运行。
 
@@ -85,6 +85,8 @@ nullptr, 0, aclFormat::ACL_FORMAT_ND, shape.data(), shape.size(), nullptr);
 aclTensor tensor2 = aclCreateTensor(shape.data(), shape.size(), aclDataType::ACL_FLOAT,
 nullptr, 0, aclFormat::ACL_FORMAT_ND, shape.data(), shape.size(), nullptr);
 aclTensor tensor3 = aclCreateTensor(shape.data(), shape.size(), aclDataType::ACL_FLOAT,
+nullptr, 0, aclFormat::ACL_FORMAT_ND, shape.data(), shape.size(), nullptr);
+aclTensor tensor4 = aclCreateTensor(shape.data(), shape.size(), aclDataType::ACL_FLOAT,
 nullptr, 0, aclFormat::ACL_FORMAT_ND, shape.data(), shape.size(), nullptr);
 aclTensor output = aclCreateTensor(shape.data(), shape.size(), aclDataType::ACL_FLOAT,
 nullptr, 0, aclFormat::ACL_FORMAT_ND, shape.data(), shape.size(), nullptr);

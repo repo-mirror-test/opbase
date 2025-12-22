@@ -1,6 +1,6 @@
 # aclInitTensor<a name="ZH-CN_TOPIC_0000001983530468"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 初始化给定aclTensor的参数，aclTensor由[aclCreateTensor](aclCreateTensor.md)接口创建。
 
@@ -14,9 +14,7 @@ aclnnStatus aclInitTensor(aclTensor *tensor, const int64_t *viewDims, uint64_t v
 
 ## 参数说明<a name="section75395119104"></a>
 
-> **说明：** 
->-   aclDataType是框架定义的一种数据类型枚举类，具体参见。
->-   aclFormat是框架定义的一种数据格式枚举类，具体参见。
+> **说明：**
 >-   关于aclTensor的StorageShape和ViewShape：
 >    -   ViewShape表示Tensor的逻辑shape，是Tensor在实际使用时需要用到的大小。
 >    -   StorageShape表示Tensor的实际物理排布shape，是Tensor在内存上实际存在的大小。
@@ -110,7 +108,7 @@ aclnnStatus aclInitTensor(aclTensor *tensor, const int64_t *viewDims, uint64_t v
 
 返回0表示成功，返回其他值表示失败，返回码列表参见[公共接口返回码](公共接口返回码.md)。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 

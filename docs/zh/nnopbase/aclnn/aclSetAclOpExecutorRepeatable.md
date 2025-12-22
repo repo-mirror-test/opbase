@@ -1,6 +1,6 @@
 # aclSetAclOpExecutorRepeatable<a name="ZH-CN_TOPIC_0000002020209841"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 使能aclOpExecutor为可复用状态。当用户想复用已有的aclOpExecutor时，必须在一阶段接口aclxxXxxGetworkspaceSize运行完成后，立即使用该接口使能复用，后续可多次调用第二段接口acl_Xxx_进行算子执行。
 
@@ -41,15 +41,13 @@ aclnnStatus aclSetAclOpExecutorRepeatable(aclOpExecutor *executor)
 
 -   返回561103：executor是空指针。
 
-## 约束与限制<a name="section1341119401796"></a>
+## 约束说明<a name="section1341119401796"></a>
 
 -   目前采用AI CPU和AI Core计算单元的算子支持使能aclOpExecutor可复用。
 -   调用单算子API执行接口时，如下场景无法使能aclOpExecutor复用：
 
     -   如果使用了HostToDevice、DeviceToDevice拷贝相关的L0层API，如CopyToNpu、CopyNpuToNpu、CopyToNpuSync等，不支持aclOpExecutor复用。
     -   如果使用了L0层ViewCopy接口，同时ViewCopy的源地址和目的地址相同时，不支持aclOpExecutor复用。
-
-    关于L0层接口的具体介绍请参见。
 
 -   调用单算子API执行接口时，不允许算子API内部创建Device Tensor，只允许使用外部传入的Tensor。
 -   设置成复用状态的aclOpExecutor在第二段接口执行完后不会对executor的资源进行清理，需要和[aclDestroyAclOpExecutor](aclDestroyAclOpExecutor.md)配套使用清理资源。

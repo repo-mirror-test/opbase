@@ -1,6 +1,6 @@
 # aclCreateFloatArray<a name="ZH-CN_TOPIC_0000002020209821"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 创建aclFloatArray对象，作为单算子API执行接口的入参。
 
@@ -44,7 +44,7 @@ aclFloatArray *aclCreateFloatArray(const float *value, uint64_t size)
 
 成功则返回创建好的aclFloatArray，否则返回nullptr。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 -   本接口需与[aclDestroyFloatArray](aclDestroyFloatArray.md)接口配套使用，分别完成aclFloatArray的创建与销毁。
 -   调用[aclGetFloatArraySize](aclGetFloatArraySize.md)接口可以获取aclFloatArray的大小。

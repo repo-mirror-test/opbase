@@ -1,6 +1,6 @@
 # aclGetTensorListSize<a name="ZH-CN_TOPIC_0000001983690188"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 获取aclTensorList的大小，aclTensorList通过[aclCreateTensorList](aclCreateTensorList.md)接口创建。
 
@@ -46,7 +46,7 @@ aclnnStatus aclGetTensorListSize(const aclTensorList *tensorList, uint64_t *size
 
 -   返回161001：参数tensorList或size为空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 

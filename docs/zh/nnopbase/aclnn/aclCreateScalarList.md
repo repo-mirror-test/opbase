@@ -1,6 +1,6 @@
 # aclCreateScalarList<a name="ZH-CN_TOPIC_0000002020209837"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 创建aclScalarList对象，作为单算子API执行接口的入参。
 
@@ -44,7 +44,7 @@ aclScalarList *aclCreateScalarList(const aclScalar *const *value, uint64_t size)
 
 成功则返回创建好的aclScalarList，否则返回nullptr。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 -   调用本接口前，需提前调用[aclCreateScalar](aclCreateScalar.md)接口创建aclScalar。
 -   本接口需与[aclDestroyScalarList](aclDestroyScalarList.md)接口配套使用，分别完成aclScalarList的创建与销毁。

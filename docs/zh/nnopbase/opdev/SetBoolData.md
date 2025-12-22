@@ -61,7 +61,7 @@ void SetBoolData(const bool *value, uint64_t size, op::DataType dataType)
 // 初始化一块bool内存，将其转为int64后，赋值给input的前10个元素
 void Func(const aclTensor *input) {
     bool myArray[10];
-    input->SetData(myArray, 10, DT_INT64);
+    input->SetBoolData(myArray, 10, DT_INT64);
 }
 ```
 

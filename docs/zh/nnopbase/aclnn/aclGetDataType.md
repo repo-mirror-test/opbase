@@ -1,6 +1,6 @@
 # aclGetDataType<a name="ZH-CN_TOPIC_0000001983690180"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 获取aclTensor的DataType，aclTensor由[aclCreateTensor](aclCreateTensor.md)接口创建。
 
@@ -11,9 +11,6 @@ aclnnStatus aclGetDataType(const aclTensor *tensor, aclDataType *dataType)
 ```
 
 ## 参数说明<a name="section75395119104"></a>
-
-> **说明：** 
->aclDataType是框架定义的一种数据类型枚举类，具体参见。
 
 <a name="zh-cn_topic_0122830089_table438764393513"></a>
 <table><thead align="left"><tr id="zh-cn_topic_0122830089_row53871743113510"><th class="cellrowborder" valign="top" width="29.03%" id="mcps1.1.4.1.1"><p id="zh-cn_topic_0122830089_p1438834363520"><a name="zh-cn_topic_0122830089_p1438834363520"></a><a name="zh-cn_topic_0122830089_p1438834363520"></a>参数名</p>
@@ -49,7 +46,7 @@ aclnnStatus aclGetDataType(const aclTensor *tensor, aclDataType *dataType)
 
 -   返回161001：参数tensor或dataType为空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 

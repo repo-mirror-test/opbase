@@ -4,9 +4,6 @@
 
 将aclFormat转为对应的op::Format。
 
--   aclFormat：该数据格式的详细定义参见。
--   op::Format：算子框架内部定义的数据格式，本质使用的是GE定义的ge::Format，参见[《基础数据结构和接口参考》](https://www.hiascend.com/document/redirect/CannCommunitybasicopapi)中”ge命名空间 > Format“。
-
 ## 函数原型<a name="zh-cn_topic_0000002078653714_zh-cn_topic_0000001920997906_zh-cn_topic_0000001647821269_section13230182415108"></a>
 
 ```

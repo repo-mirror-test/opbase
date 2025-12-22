@@ -1,27 +1,5 @@
 # CeilDiv<a name="ZH-CN_TOPIC_0000002450096170"></a>
 
-## 产品支持情况<a name="section1227010103292"></a>
-
-<a name="table1527071022913"></a>
-<table><thead align="left"><tr id="row7271910142918"><th class="cellrowborder" valign="top" width="57.99999999999999%" id="mcps1.1.3.1.1"><p id="p17271141011299"><a name="p17271141011299"></a><a name="p17271141011299"></a><span id="ph12271181013298"><a name="ph12271181013298"></a><a name="ph12271181013298"></a>产品</span></p>
-</th>
-<th class="cellrowborder" align="center" valign="top" width="42%" id="mcps1.1.3.1.2"><p id="p192711010162910"><a name="p192711010162910"></a><a name="p192711010162910"></a>是否支持</p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row9271191019295"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p132712101296"><a name="p132712101296"></a><a name="p132712101296"></a><span id="ph12271171092913"><a name="ph12271171092913"></a><a name="ph12271171092913"></a><term id="zh-cn_topic_0000001312391781_term1253731311225"><a name="zh-cn_topic_0000001312391781_term1253731311225"></a><a name="zh-cn_topic_0000001312391781_term1253731311225"></a>Atlas A3 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term12835255145414"><a name="zh-cn_topic_0000001312391781_term12835255145414"></a><a name="zh-cn_topic_0000001312391781_term12835255145414"></a>Atlas A3 推理系列产品</term></span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p16271210182911"><a name="p16271210182911"></a><a name="p16271210182911"></a>√</p>
-</td>
-</tr>
-<tr id="row13271610132913"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p15271131016296"><a name="p15271131016296"></a><a name="p15271131016296"></a><span id="ph6271161052915"><a name="ph6271161052915"></a><a name="ph6271161052915"></a><term id="zh-cn_topic_0000001312391781_term11962195213215"><a name="zh-cn_topic_0000001312391781_term11962195213215"></a><a name="zh-cn_topic_0000001312391781_term11962195213215"></a>Atlas A2 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term1551319498507"><a name="zh-cn_topic_0000001312391781_term1551319498507"></a><a name="zh-cn_topic_0000001312391781_term1551319498507"></a>Atlas 800I A2 推理产品</term>/A200I A2 Box 异构组件</span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p1027115103298"><a name="p1027115103298"></a><a name="p1027115103298"></a>√</p>
-</td>
-</tr>
-</tbody>
-</table>
-
 ## 功能说明<a name="section1627341013299"></a>
 
 向上取整的除法。

@@ -1,27 +1,5 @@
 # IsFloatEqual<a name="ZH-CN_TOPIC_0000002483335661"></a>
 
-## 产品支持情况<a name="section1731422317413"></a>
-
-<a name="table231415239415"></a>
-<table><thead align="left"><tr id="row73144231412"><th class="cellrowborder" valign="top" width="57.99999999999999%" id="mcps1.1.3.1.1"><p id="p9314192318410"><a name="p9314192318410"></a><a name="p9314192318410"></a><span id="ph1831462318412"><a name="ph1831462318412"></a><a name="ph1831462318412"></a>产品</span></p>
-</th>
-<th class="cellrowborder" align="center" valign="top" width="42%" id="mcps1.1.3.1.2"><p id="p031419231746"><a name="p031419231746"></a><a name="p031419231746"></a>是否支持</p>
-</th>
-</tr>
-</thead>
-<tbody><tr id="row183141239413"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p10314132314413"><a name="p10314132314413"></a><a name="p10314132314413"></a><span id="ph83144231148"><a name="ph83144231148"></a><a name="ph83144231148"></a><term id="zh-cn_topic_0000001312391781_term1253731311225"><a name="zh-cn_topic_0000001312391781_term1253731311225"></a><a name="zh-cn_topic_0000001312391781_term1253731311225"></a>Atlas A3 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term12835255145414"><a name="zh-cn_topic_0000001312391781_term12835255145414"></a><a name="zh-cn_topic_0000001312391781_term12835255145414"></a>Atlas A3 推理系列产品</term></span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p19314102313415"><a name="p19314102313415"></a><a name="p19314102313415"></a>√</p>
-</td>
-</tr>
-<tr id="row17314223247"><td class="cellrowborder" valign="top" width="57.99999999999999%" headers="mcps1.1.3.1.1 "><p id="p1931412313416"><a name="p1931412313416"></a><a name="p1931412313416"></a><span id="ph16314123948"><a name="ph16314123948"></a><a name="ph16314123948"></a><term id="zh-cn_topic_0000001312391781_term11962195213215"><a name="zh-cn_topic_0000001312391781_term11962195213215"></a><a name="zh-cn_topic_0000001312391781_term11962195213215"></a>Atlas A2 训练系列产品</term>/<term id="zh-cn_topic_0000001312391781_term1551319498507"><a name="zh-cn_topic_0000001312391781_term1551319498507"></a><a name="zh-cn_topic_0000001312391781_term1551319498507"></a>Atlas 800I A2 推理产品</term>/A200I A2 Box 异构组件</span></p>
-</td>
-<td class="cellrowborder" align="center" valign="top" width="42%" headers="mcps1.1.3.1.2 "><p id="p83142233417"><a name="p83142233417"></a><a name="p83142233417"></a>√</p>
-</td>
-</tr>
-</tbody>
-</table>
-
 ## 功能说明<a name="section23161123546"></a>
 
 判断两个float类型或double类型的数值是否相等。

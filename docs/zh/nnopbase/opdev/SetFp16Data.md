@@ -61,7 +61,7 @@ void SetFp16Data(const op::fp16_t *value, uint64_t size, op::DataType dataType)
 // 初始化一块fp16内存，赋值给input的前10个元素
 void Func(const aclTensor *input) {
     fp16_t myArray[10];
-    input->SetData(myArray, 10, DT_FLOAT16);
+    input->SetFp16Data(myArray, 10, DT_FLOAT16);
 }
 ```
 

@@ -1,6 +1,6 @@
 # aclCreateBoolArray<a name="ZH-CN_TOPIC_0000001983690172"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 创建aclBoolArray对象，作为单算子API执行接口的入参。
 
@@ -44,7 +44,7 @@ aclBoolArray *aclCreateBoolArray(const bool *value, uint64_t size)
 
 成功则返回创建好的aclBoolArray，否则返回nullptr。
 
-## 约束与限制<a name="section186749179365"></a>
+## 约束说明<a name="section186749179365"></a>
 
 -   本接口需与[aclDestroyBoolArray](aclDestroyBoolArray.md)接口配套使用，分别完成aclBoolArray的创建与销毁。
 -   调用[aclGetBoolArraySize](aclGetBoolArraySize.md)接口可以获取aclBoolArray的大小。

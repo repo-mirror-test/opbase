@@ -1,6 +1,6 @@
 # aclGetIntArraySize<a name="ZH-CN_TOPIC_0000001983530460"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 获取aclIntArray的大小，aclIntArray通过[aclCreateIntArray](aclCreateIntArray.md)接口创建。
 
@@ -46,7 +46,7 @@ aclnnStatus aclGetIntArraySize(const aclIntArray *array, uint64_t *size)
 
 -   返回161001：参数array或size为空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 
@@ -57,7 +57,7 @@ aclnnStatus aclGetIntArraySize(const aclIntArray *array, uint64_t *size)
 ```
 // 创建aclIntArray
 std::vector<int64_t> valueData = {1, 1, 2, 3};
-aclIntArray *valueArray = aclCreateIntArray(sizeData.data(),sizeData.size());
+aclIntArray *valueArray = aclCreateIntArray(valueData.data(), valueData.size());
 ...
 // 使用aclGetIntArraySize接口获取valueArray的大小
 uint64_t size = 0;

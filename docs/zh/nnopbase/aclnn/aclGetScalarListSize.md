@@ -1,6 +1,6 @@
 # aclGetScalarListSize<a name="ZH-CN_TOPIC_0000001983690192"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 获取aclScalarList的大小，aclScalarList通过[aclCreateScalarList](aclCreateScalarList.md)接口创建。
 
@@ -46,7 +46,7 @@ aclnnStatus aclGetScalarListSize(const aclScalarList *scalarList, uint64_t *size
 
 -   返回161001：参数scalarList或size为空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 
@@ -57,13 +57,13 @@ aclnnStatus aclGetScalarListSize(const aclScalarList *scalarList, uint64_t *size
 ```
 // 创建aclScalarList
 std::vector<aclScalar *> tempscalar{alpha1, alpha2};
-aclScalarList *scalarlist = aclCreateScalarList(tempscalar.data(), tempscalar.size());
+aclScalarList *scalarList = aclCreateScalarList(tempscalar.data(), tempscalar.size());
 ...
 // 获取scalarList的大小
 uint64_t size = 0;
 auto ret = aclGetScalarListSize(scalarList, &size); // 这里获取到的scalarList的size为2
 ...
 // 销毁aclScalarList
-ret = aclDestroyScalarList(scalarlist);
+ret = aclDestroyScalarList(scalarList);
 ```
 

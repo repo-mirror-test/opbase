@@ -1,6 +1,6 @@
 # aclGetFloatArraySize<a name="ZH-CN_TOPIC_0000002020209833"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 获取aclFloatArray的大小，aclFloatArray通过[aclCreateFloatArray](aclCreateFloatArray.md)接口创建。
 
@@ -46,7 +46,7 @@ aclnnStatus aclGetFloatArraySize(const aclFloatArray *array, uint64_t *size)
 
 -   返回161001：参数array或size为空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 
@@ -57,7 +57,7 @@ aclnnStatus aclGetFloatArraySize(const aclFloatArray *array, uint64_t *size)
 ```
 // 创建aclFloatArray
 std::vector<float> scalesData = {1.0, 1.0, 2.0, 2.0};
-aclFloatArray *scales = aclCreateFloatArray(scalesData.data(),scalesData.size());
+aclFloatArray *scales = aclCreateFloatArray(scalesData.data(), scalesData.size());
 ...
 // 使用aclGetFloatArraySize接口获取scales的大小
 uint64_t size = 0;

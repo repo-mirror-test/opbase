@@ -1,6 +1,6 @@
 # aclDestroyAclOpExecutor<a name="ZH-CN_TOPIC_0000002020090313"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 aclOpExecutor是框架定义的算子执行器，用来执行算子计算的容器，开发者无需关注其内部实现，直接使用即可。
 
@@ -42,7 +42,7 @@ aclnnStatus aclDestroyAclOpExecutor(aclOpExecutor *executor)
 
 -   返回561103：executor是空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 本接口需与[aclSetAclOpExecutorRepeatable](aclSetAclOpExecutorRepeatable.md)接口配套使用，分别完成aclOpExecutor的复用与销毁。
 

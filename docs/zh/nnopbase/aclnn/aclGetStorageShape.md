@@ -1,6 +1,6 @@
 # aclGetStorageShape<a name="ZH-CN_TOPIC_0000001983530464"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 获取aclTensor的StorageShape，aclTensor由[aclCreateTensor](aclCreateTensor.md)接口创建。
 
@@ -55,7 +55,7 @@ aclnnStatus aclGetStorageShape(const aclTensor *tensor, int64_t **storageDims, u
 
 -   返回161001：参数tensor或storageDims或storageDimsNum为空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 参数storageDims内存是本接口内部申请，使用完后必须delete手动释放。
 

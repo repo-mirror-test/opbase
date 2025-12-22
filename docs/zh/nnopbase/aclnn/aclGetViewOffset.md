@@ -1,6 +1,6 @@
 # aclGetViewOffset<a name="ZH-CN_TOPIC_0000002020209829"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 获取aclTensor的ViewOffset，即ViewShape对应的offset，aclTensor由[aclCreateTensor](aclCreateTensor.md)接口创建。
 
@@ -46,7 +46,7 @@ aclnnStatus aclGetViewOffset(const aclTensor *tensor, int64_t *offset)
 
 -   返回161001：参数tensor或offset空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 

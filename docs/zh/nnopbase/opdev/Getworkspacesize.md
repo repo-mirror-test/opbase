@@ -1,4 +1,4 @@
-# Getworkspacesize<a name="ZH-CN_TOPIC_0000002515603033"></a>
+# GetWorkspaceSize<a name="ZH-CN_TOPIC_0000002515603033"></a>
 
 ## 功能说明<a name="zh-cn_topic_0000002078499006_zh-cn_topic_0000001974927281_zh-cn_topic_0000001647821269_section36583473819"></a>
 

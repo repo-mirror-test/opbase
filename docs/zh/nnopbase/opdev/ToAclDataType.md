@@ -4,9 +4,6 @@
 
 将op::DataType转换为对应的aclDataType。
 
--   aclDataType：该数据类型的详细定义参见。
--   op::DataType：算子框架内部定义的数据类型，本质使用的是GE定义的ge::DataType，参见[《基础数据结构和接口参考》](https://www.hiascend.com/document/redirect/CannCommunitybasicopapi)中”ge命名空间 > DataType“。
-
 ## 函数原型<a name="zh-cn_topic_0000002114098053_zh-cn_topic_0000001949479081_zh-cn_topic_0000001647821269_section13230182415108"></a>
 
 ```

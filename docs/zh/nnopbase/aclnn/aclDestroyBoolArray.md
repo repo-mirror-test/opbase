@@ -1,6 +1,6 @@
 # aclDestroyBoolArray<a name="ZH-CN_TOPIC_0000001983530448"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 销毁通过[aclCreateBoolArray](aclCreateBoolArray.md)接口创建的aclBoolArray。
 
@@ -35,7 +35,7 @@ aclnnStatus aclDestroyBoolArray(const aclBoolArray *array)
 
 返回0表示成功，返回其他值表示失败，返回码列表参见[公共接口返回码](公共接口返回码.md)。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 无
 

@@ -1,8 +1,8 @@
 # aclCreateIntArray<a name="ZH-CN_TOPIC_0000001983690168"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
-创建aclCreateIntArray对象，作为单算子API执行接口的入参。
+创建aclIntArray对象，作为单算子API执行接口的入参。
 
 aclCreateIntArray是框架定义的一种用来管理和存储整型数据的数组结构，开发者无需关注其内部实现，直接使用即可。
 
@@ -44,7 +44,7 @@ aclIntArray *aclCreateIntArray(const int64_t *value, uint64_t size)
 
 成功则返回创建好的aclIntArray，否则返回nullptr。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 -   本接口需与[aclDestroyIntArray](aclDestroyIntArray.md)接口配套使用，分别完成aclIntArray的创建与销毁。
 -   调用[aclGetIntArraySize](aclGetIntArraySize.md)接口可以获取aclIntArray的大小。

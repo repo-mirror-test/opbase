@@ -1,6 +1,6 @@
 # aclGetRawTensorAddr<a name="ZH-CN_TOPIC_0000002185050736"></a>
 
-## 函数功能<a name="section36583473819"></a>
+## 功能说明<a name="section36583473819"></a>
 
 获取aclTensor中原始记录的Device内存地址，aclTensor由[aclCreateTensor](aclCreateTensor.md)接口创建。
 
@@ -46,7 +46,7 @@ aclnnStatus aclGetRawTensorAddr(const aclTensor *tensor, void **addr)
 
 -   返回161001：参数tensor或者addr为空指针。
 
-## 约束与限制<a name="section141811212135015"></a>
+## 约束说明<a name="section141811212135015"></a>
 
 -   必须在一阶段接口aclxxXxxGetWorkspaceSize之前或者二阶段接口aclxxXxx之后使用，不支持在一阶段与二阶段接口之间使用。
 -   本接口可与[aclSetRawTensorAddr](aclSetRawTensorAddr.md)接口配套使用，查看刷新后的结果是否符合预期。
