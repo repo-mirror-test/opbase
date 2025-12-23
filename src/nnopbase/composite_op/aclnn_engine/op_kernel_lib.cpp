@@ -136,7 +136,8 @@ const std::string &OpKernelLib::GetSocPath()
         {"Ascend310P7", "ascend310p/"},
         {"Ascend310B1", "ascend310b/"},
         {"Ascend310B4", "ascend310b/"},
-        {"Ascend610Lite", "ascend610lite/"}
+        {"Ascend610Lite", "ascend610lite/"},
+        {"KirinX90", "kirinx90/"}
     };
 
     auto soc = aclrtGetSocName();
