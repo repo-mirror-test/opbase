@@ -107,12 +107,6 @@ unsetenv() {
     else
         uninstall_option=""
     fi
-    checkfileexist "${_ABS_INSTALL_PATH}/${ops_base_platform_dir}/bin/setenv.bash"
-    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
-    checkfileexist "${_ABS_INSTALL_PATH}/${ops_base_platform_dir}/bin/setenv.csh"
-    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
-    checkfileexist "${_ABS_INSTALL_PATH}/${ops_base_platform_dir}/bin/setenv.fish"
-    logwitherrorlevel "$?" "error" "[ERROR]: ERR_NO:${OPERATE_FAILED};ERR_DES:Uninstall opbase module failed."
 }
 
 installed_path="$1"

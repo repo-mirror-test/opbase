@@ -20,7 +20,6 @@
     </generate_info>
     <file_info value="ops_base_script" copy_type="source" src_path="" dst_path="share/info/ops_base" install_path="share/info/opbase">
         <file value="script" entity="true"/>
-        <file value="bin" entity="true"/>
         <file value="version.info" dst_path="share/info/ops_base"/>
     </file_info>
     <file_info value="ops_base_script" copy_type="source" src_path="" dst_path="share/info/ops_base" install_path="opp">
@@ -127,7 +126,6 @@
         <path value="share/info" install_mod="750"/>
         <path value="share/info/opbase" install_mod="750"/>
         <path value="share/info/opbase/script" install_mod="550"/>
-        <path value="share/info/opbase/bin" install_mod="550"/>
         <path value="$(TARGET_ENV)/lib64/device" install_mod="550"/>
         <path value="$(TARGET_ENV)/lib64/device/lib64" install_mod="550"/>
     </dir_info>

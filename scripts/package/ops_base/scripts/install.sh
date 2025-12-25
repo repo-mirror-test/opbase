@@ -267,7 +267,7 @@ KEY_RUNPKG_VERSION="Version"
 getrunpkginfo() {
     _key_param="$1"
     if [ -f "${_VERSION_INFO_FILE}" ]; then
-        . "${_VERSION_INFO_FILE}"
+        . "${_VERSION_INFO_FILE}" 2> /dev/null
         case "${_key_param}" in
         Version)
             echo ${Version}
@@ -1407,12 +1407,10 @@ matchfullpath "${target_dir}"
 #target_dir=${absolute_path}
 
 if [ "${is_check}" = "y" ]; then
-    if [ -z "$pkg_version_dir" ]; then
-        preinstall_check --install-path="${target_dir}" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
-        if [ $? -ne 0 ]; then
-            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
-            exit 1
-	fi
+    preinstall_check --install-path="${_TARGET_INSTALL_PATH}/$pkg_version_dir" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
+    if [ $? -ne 0 ]; then
+        logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
+        exit 1
     fi
 fi
 
@@ -1553,12 +1551,10 @@ user group (${_DEFAULT_USERGROUP}) for devel mode? [y/n]"
         fi
     fi
     # check the compatibility of opbase
-    if [ -z "$pkg_version_dir" ]; then
-        preinstall_process --install-path="${target_dir}" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
-        if [ $? -ne 0 ]; then
-            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
-            exit 1
-        fi
+    preinstall_process --install-path="${_TARGET_INSTALL_PATH}/$pkg_version_dir" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
+    if [ $? -ne 0 ]; then
+        logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
+        exit 1
     fi
     # call opp_install.sh
     if [ -d "${target_dir}/opbase" ] && [ ! -L "${target_dir}/opbase" ] && [ -f "${target_dir}/opbase/script/uninstall.sh" ]; then
@@ -1590,12 +1586,10 @@ if [ "${is_upgrade}" = "y" ];then
         interact_pre_check
     fi
     # check the compatibility of opbase
-    if [ -z "$pkg_version_dir" ]; then
-        preinstall_process --install-path="${target_dir}" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
-        if [ $? -ne 0 ]; then
-            logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
-            exit 1
-        fi
+    preinstall_process --install-path="${_TARGET_INSTALL_PATH}/$pkg_version_dir" --docker-root="${docker_root}" --script-dir="${_CURR_PATH}" --package="${opp_platform_dir}" --logfile="${_INSTALL_LOG_FILE}"
+    if [ $? -ne 0 ]; then
+        logandprint "[ERROR]: ERR_NO:${OPP_COMPATIBILITY_CEHCK_ERR};ERR_DES:Check the compatibility of opbase package fail,please confirm the true version package."
+        exit 1
     fi
     sh "${_UPGRADE_SHELL_FILE}" "${_TARGET_INSTALL_PATH}" "${_DEFAULT_USERNAME}" "${_DEFAULT_USERGROUP}" ${in_feature} "${is_quiet}" "${is_for_all}" "${is_setenv}" "${is_docker_install}" "${docker_root}" "${is_input_path}" "${is_upgrade}" "${in_feature_new}" "${chip_type_new}"
     if [ $(id -u) -eq 0 ]; then
