@@ -480,7 +480,7 @@ aclnnStatus NnopbaseExecutorAddDynamicTensors(NnopbaseExecutor *executor, const 
         ACLNN_ERR_PARAM_INVALID, "Tensor index [%zu] is greater than or equal to IrTensor num: %d",
         index, tensors->paramDescs.count);
     CHECK_COND(tensorList->Size() <= NNOPBASE_DYNAMIC_PARAM_DEF_NUM,
-        ACLNN_ERR_PARAM_INVALID, "Size of tensorList in dynamic input[%zu] is %llu, which exceeds limit :%d",
+        ACLNN_ERR_PARAM_INVALID, "Size of tensorList in dynamic input[%zu] is %llu, which exceeds limit: %d",
         index, tensorList->Size(), NNOPBASE_DYNAMIC_PARAM_DEF_NUM);
 
     uint32_t count = 0U;

@@ -10,6 +10,7 @@
 #include "utils.h"
 #include <algorithm>
 #include <stdexcept>
+#include <cstdint>
 
 namespace aclnnOpInfoRecord {
 std::string Utils::TrimLeft(const std::string &s)

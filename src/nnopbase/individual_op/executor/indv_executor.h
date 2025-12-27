@@ -241,7 +241,7 @@ aclnnStatus NnopbaseExecutorAddAttr(NnopbaseExecutor *executor, void *const attr
 // IOcache
 aclnnStatus NnopbaseExecutorInitIoCaches(NnopbaseTensors *tensors, const NnopbaseChar *paramDesc, const uint32_t num);
 aclnnStatus NnopbaseExecutorExtendIoCaches(NnopbaseTensors *tensors);
-aclnnStatus NnopbaseExecutorFixCache(NnopbaseExecutor *executor);
+void NnopbaseExecutorFixCache(NnopbaseExecutor *executor);
 
 // execute
 aclnnStatus NnopbaseExecutorRunWithWorkspace(NnopbaseExecutor *executor, rtStream_t stream, void *workspace,

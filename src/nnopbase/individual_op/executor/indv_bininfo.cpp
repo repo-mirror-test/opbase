@@ -387,7 +387,7 @@ aclnnStatus NnopbaseGetMemsetBinInfo(std::unique_ptr<NnopbaseMemsetInfo> &memset
     return OK;
 }
 
-aclnnStatus NnopbaseReadMemsetJsonInfo(const std::string &oppPath, nlohmann::json &memsetJsonInfo,
+aclnnStatus NnopbaseReadMemsetJsonInfo(const std::string &memsetBasePath, nlohmann::json &memsetJsonInfo,
     std::unique_ptr<NnopbaseMemsetInfo> &memsetInfo, const size_t initNum)
 {
     for (auto& bin : memsetJsonInfo["binList"]) {
@@ -396,7 +396,8 @@ aclnnStatus NnopbaseReadMemsetJsonInfo(const std::string &oppPath, nlohmann::jso
                 if (attr["value"].size() == initNum) {
                     try {
                         std::string path = bin["binInfo"]["jsonFilePath"].get<std::string>();
-                        memsetInfo->memSetJsonPath = oppPath + "/built-in/op_impl/ai_core/tbe/kernel/" + path;
+                        auto pos = path.find('/'); // 一定存在
+                        memsetInfo->memSetJsonPath = memsetBasePath + "/" + path.substr(pos + 1);
                         OP_LOGI("Init num is %zu, jsonPath is %s", initNum, memsetInfo->memSetJsonPath.c_str());
                         NNOPBASE_ASSERT_OK_RETVAL(NnopbaseGetMemsetBinInfo(memsetInfo));
                         NNOPBASE_ASSERT_OK_RETVAL(NnopbaseLoadMemsetJson(memsetInfo));
@@ -415,16 +416,22 @@ aclnnStatus NnopbaseReadMemsetJsonInfo(const std::string &oppPath, nlohmann::jso
 
 aclnnStatus NnopbaseGenMemsetInfo(NnopbaseBinInfo *binInfo, const std::string &oppPath, const std::string &socVersion)
 {
-    const std::string memsetDirPath = oppPath + NNOPBASE_MEMSET_DEFAULT_PATH + socVersion + NNOPBASE_MEMSET_JSON_PATH;
+    std::string memsetBasePath = oppPath + NNOPBASE_MEMSET_DEFAULT_PATH + socVersion + "/ops_legacy";
+    const std::string memsetDirPathV2 = memsetBasePath + NNOPBASE_MEMSET_JSON_PATH;
     nlohmann::json memsetJsonInfo;
-    CHECK_COND(NnopbaseReadJsonConfig(memsetDirPath, memsetJsonInfo) == OK,
+    if (NnopbaseReadJsonConfig(memsetDirPathV2, memsetJsonInfo) != OK) {
+        OP_LOGW("Read %s failed, trying another path.", memsetDirPathV2.c_str());
+        memsetBasePath = oppPath + NNOPBASE_MEMSET_DEFAULT_PATH + socVersion;
+        std::string memsetDirPath = memsetBasePath + NNOPBASE_MEMSET_JSON_PATH;
+        CHECK_COND(NnopbaseReadJsonConfig(memsetDirPath, memsetJsonInfo) == OK,
         ACLNN_ERR_PARAM_INVALID,
         "Read %s failed.",
         memsetDirPath.c_str());
+    }
     binInfo->memsetInfo = std::make_unique<NnopbaseMemsetInfo>();
     NNOPBASE_ASSERT_NOTNULL_RETVAL(binInfo->memsetInfo);
     NNOPBASE_ASSERT_OK_RETVAL(
-        NnopbaseReadMemsetJsonInfo(oppPath, memsetJsonInfo, binInfo->memsetInfo, binInfo->initValues.size()));
+        NnopbaseReadMemsetJsonInfo(memsetBasePath, memsetJsonInfo, binInfo->memsetInfo, binInfo->initValues.size()));
     return NnopbaseRegisterMemsetBin(binInfo->memsetInfo->binInfo);
 }
 

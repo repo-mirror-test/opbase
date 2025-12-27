@@ -363,7 +363,7 @@ void NnopbaseExecutorClear(NnopbaseExecutor *executor)
     executor->isWork = false;  /* this isWork field MUST BE the tail of this funtion. */
 }
 
-aclnnStatus NnopbaseExecutorFixCache(NnopbaseExecutor *executor)
+void NnopbaseExecutorFixCache(NnopbaseExecutor *executor)
 {
     nnopbase::ArgsPool::GetInstance().FixCache(executor->args);
 }

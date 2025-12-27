@@ -89,6 +89,7 @@ set(NNOPBASE_TEST_HEADER_FILES
     ${OPS_BASE_PATH}/third_party/gtest/include/
     ${OPS_BASE_PATH}/third_party/json/include/
     ${OPS_BASE_PATH}/third_party/mockcpp/include
+    ${OPS_BASE_PATH}/third_party/boost
     ${OPS_BASE_PATH}/tests/nnopbase/common/
 
     ${ASCEND_INCLUDE_DIR}/

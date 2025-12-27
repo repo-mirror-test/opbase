@@ -12,6 +12,7 @@
 
 #include <vector>
 #include <string>
+#include <cstdint>
 
 namespace nnopbase {
 class IndvPath {

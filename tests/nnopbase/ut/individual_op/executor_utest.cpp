@@ -2232,13 +2232,13 @@ TEST_F(NnopbaseExecutorUnitTest, TestGetMemsetBinInfoFailed)
     ASSERT_EQ(NnopbaseGetBinPath(jsonPath, binPath), ACLNN_ERR_PARAM_INVALID);
     ASSERT_EQ(NnopbaseGetOpJsonPath(jsonPath, binPath), ACLNN_ERR_PARAM_INVALID);
 
-    std::string oppPath = std::string(OP_API_COMMON_UT_SRC_DIR);
+    std::string oppPath = std::string(OP_API_COMMON_UT_SRC_DIR) + "/built-in/op_impl/ai_core/tbe/kernel/config/ascend910";
     std::unique_ptr<NnopbaseMemsetInfo> memsetInfo = std::make_unique<NnopbaseMemsetInfo>();
     memsetInfo->memSetJsonPath = oppPath + "/built-in/op_impl/ai_core/tbe/kernel/ascend910/mem_set/MemSet_2e0edc6c5154edf0badbec9c57f44db6_high_performance_error.json";
     ASSERT_EQ(NnopbaseGetMemsetBinInfo(memsetInfo), ACLNN_ERR_PARAM_INVALID);
 
     const std::string memsetDirPath =
-            oppPath + "/built-in/op_impl/ai_core/tbe/kernel/config/ascend910/mem_set.json";
+            oppPath + "/mem_set.json";
     nlohmann::json memsetJsonInfo;
     ASSERT_EQ(NnopbaseReadJsonConfig(memsetDirPath, memsetJsonInfo), OK);
     ASSERT_EQ(NnopbaseReadMemsetJsonInfo(oppPath, memsetJsonInfo, memsetInfo, 3U), ACLNN_ERR_PARAM_INVALID);

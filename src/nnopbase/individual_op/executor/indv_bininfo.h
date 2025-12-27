@@ -210,7 +210,7 @@ NnopbaseChar *NnopbaseGetmmErrorMsg();
 aclnnStatus NnopbaseLoadMemsetJson(std::unique_ptr<NnopbaseMemsetInfo> &memsetInfo);
 aclnnStatus NnopbaseGetBinPath(const std::string &jsonPath, std::string &binPath);
 aclnnStatus NnopbaseGetMemsetBinInfo(std::unique_ptr<NnopbaseMemsetInfo> &memsetInfo);
-aclnnStatus NnopbaseReadMemsetJsonInfo(const std::string &oppPath, nlohmann::json &memsetJsonInfo,
+aclnnStatus NnopbaseReadMemsetJsonInfo(const std::string &memsetBasePath, nlohmann::json &memsetJsonInfo,
     std::unique_ptr<NnopbaseMemsetInfo> &memsetInfo, const size_t initNum);
 aclnnStatus NnopbaseRegisterMemsetBin(std::shared_ptr<NnopbaseMemsetBinInfo> &binInfo);
 
