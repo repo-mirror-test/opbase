@@ -139,7 +139,7 @@ KEY_RUNPKG_VERSION="Version"
 getrunpkginfo() {
     _key_param="$1"
     if [ -f "${_VERSION_INFO_FILE}" ]; then
-        . "${_VERSION_INFO_FILE}"
+        . "${_VERSION_INFO_FILE}" 2> /dev/null
         case "${_key_param}" in
         Version)
             echo ${Version}
